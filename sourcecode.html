@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <link rel="stylesheet" href="css/db.css" type="text/css"/>
+   <link rel="stylesheet" href="css/propairs.css" type="text/css"/>
+   <script type="text/javascript" src="js/jquery.min.js"></script>
+   <script type="text/javascript" src="js/ga.js"></script>
+   <title>ProPairs</title>
+</head>
+
+
+<body>
+   <a href="https://github.com/propairs/propairs"><img style="position: absolute; top: 0; right: 0; border: 0;"
+		src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+   <a href="index.html"><header></header></a>
+   <nav>  
+   <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="database.html">Database</a></li>
+        <li><a href="rawdata.html">Raw data</a></li>
+        <li><span>Source code</span></li>
+        <li><a href="about.html">About</a></li>        
+   </nav>
+   </ul>
+   
+   
+
+   <div id="body" class="border padding maxwidth">
+   <div class="text">
+   
+   
+<h2>Quick Start</h2>
+<p>Get the source code of ProPairs from the <a href="https://github.com/propairs/propairs">GitHub repository</a>:</p>
+<p class="code">git clone --recursive https://github.com/propairs/propairs</p>
+<p>We chose <i>Docker</i> to make ProPairs easy to use - regardless of the configuration of your system. 
+<br> Build the ProPairs Docker container:</p>
+<p class="code">cd propairs</pre>
+<p class="code">docker build -t propairs .</pre>
+<p>Create a directory to store the output data (If you choose a different directory, make sure to reuse it in the next steps!): </p>
+<p class="code">mkdir ~/ppdata</p>
+<p>Run ProPairs on a test set (takes a few minutes):</p>
+<p class="code">docker run --rm -v ~/ppdata:/data propairs -t 1</p>
+<p>This will generate raw data files with the suffix "3_clustered" for the large ProPairs set and the suffix "4_merged" for the non-redundant ProPairs set. After the step above, these files will be relatively small, since only a subset of the PDB was considered. You can run the ProPairs program on the complete PDB archive (will take days!) with:</p>
+<p class="code">docker run --rm -v ~/ppdata:/data propairs -t 0</p>
+
+<h3>Requirements</h3>
+<ul>
+<li>X86-64 machine with Git and Docker installed (see below for other architectures)</li>
+<li>At least 4GB RAM per core</li>
+<li>~200GB of free disk space</li>
+<li>Internet connection</li>
+</ul>
+<h4>Ubuntu</h4>
+<p>On Ubuntu 14.04 you can install Git and Docker like this:</p>
+<p class="code">sudo apt-get install git docker.io</p>
+<p class="code">sudo adduser $USER docker</p>
+    
+<h2>Without Docker</h2>    
+<p>You can compile the ProPairs C++ code without Docker on different architectures 
+(it even runs on a Raspberry Pi). The 
+<a href="https://github.com/propairs/propairs/blob/master/Dockerfile">Dockerfile</a> will
+give you an idea how to set up your system. 
+Be sure to have the PostgreSQL DBMS configured and running.</p>
+<p>Once the dependencies are installed get the source code and run "make": 
+
+<p class="code">git clone --recursive https://github.com/propairs/propairs</p>
+<p class="code">cd propairs</p>
+<p class="code">make</p>
+
+Depending on the architecture the Makefiles might need fixes (GitHub pull requests are very welcome!!).</p>
+<p>Start the ProPairs program like this:</p>
+<p class="code">mkdir ~/ppdata</p>
+<p class="code">./start.sh -i `pwd` -o ~/ppdata -t 1</p>
+    
+   </div>
+   <div class="fclear"></div>
+   </div>
+    
+   
+    
+    
+    
+  <footer class="maxwidth">
+     <p>© 2015 by F. Krull, Freie Universität Berlin, Macromolecular Modelling Group, Prof. E. W. Knapp</p>
+  </footer>
+</body>
+</html>
+
+

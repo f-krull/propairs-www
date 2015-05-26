@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css"/>
+   <link rel="stylesheet" href="css/db.css" type="text/css"/>
+   <script type="text/javascript" src="js/jquery.min.js"></script>
+   <script type="text/javascript" src="js/jquery-ui.min.js"></script>   
+   <script type="text/javascript" src="js/jszip.min.js"></script>
+   <script type="text/javascript" src="js/jquery.reel-min.js"></script>
+   <script type="text/javascript" src="js/dbclient.js"></script>
+
+</head>
+<body>
+
+<!---------------------------------------------------------------------------->
+
+<div id="dbControl">
+
+<!---------->
+
+<div id="Global">
+<table>
+<tr>
+   <td>dataset:<select title="choose snapshot of dataset" id="SetSelection"></select></td>
+   <td  title="download coordinate files for all selected complexes"><button id="downloadInfo"></button><a id="downloadLink" href="#">Download</a><span title="choose if download should include the coordinate files of the binding partners in bound, unbound or both states" class="nowrap">
+   (incl.<input name="DownloadType" type="radio"  value="bound">bound <input name="DownloadType" type="radio" value="unbound">unbound <input name="DownloadType" type="radio" value="both" checked="checked">both)</span></td>
+   <td><button title="show filter settings" id="ShowFilter">Show Filter</button><span title="number of complexes left after filtering" class="nowrap"> ( <span id="Stats"></span> displayed)</span></td>
+</tr>
+</table>
+</div>
+
+<!---------->
+
+<div id="Filter">
+<table class ="range">
+<tr title="range: number of C&alpha;-atoms in interface region of bound structure">
+   <td>#Intf.-C&alpha;:</td>
+   <td><input id="IcaMin" value=""></input></td>
+   <td><input id="IcaMax" value=""></input></td>
+   <td><span class="lim" id="IcaRange"></span></td>
+</tr><tr title="range: sequential similarity of the unbound structure to the interface of the bound structure">
+   <td>Sim.:</td>
+   <td><input id="SimMin" value=""></input></td>
+   <td><input id="SimMax" value=""></input></td>
+   <td><span class="lim" id="SimRange"></span></td>
+</tr><tr title="range: RMSD of the unbound structure to the bound structures interface">
+   <td>iRMSD:</td>
+   <td><input id="IrmsdMin" value=""></input></td>
+   <td><input id="IrmsdMax" value=""></input></td>
+   <td><span class="lim" id="IrmsdRange"></span></td>
+</tr><tr title="the range is applied to both or at least one of the unbound structures">
+   <td>apply to:</td><td colspan=5><select id="RangeTarget"><option value="1">at least one</option><option value="2">both unbound</option></select></td>
+</tr></table>
+<table>
+<tr title="cofactors in the interface of complex">
+   <td>Cofactors:</td><td><select id="Cofactors"><option value="a">allowed</option><option value="r">required</option><option value="f">forbidden</option></select></td>
+</tr><tr title="show complexes that are missing one unbound structure">
+   <td>Incompl. unbound:</td><td><input id="IncludeIncompl" type="checkbox"></input></td>
+</tr><tr title="hide complexes where at least one of the unbound structures is a NMR structure">
+   <td>Include NMR:</td><td><input id="IncludeNMR" type="checkbox"></input></td>
+</tr><tr title="show complexes where the complex type matches the keyword">
+   <td>Keyword:</td><td><input id="Keyword" value=""></input></td>
+</tr>
+</table>
+<table>
+<tr>
+   <td><button  title="close filter settings" id="HideFilter">Close Filter</button></td>
+</tr><tr>
+   <td></td>
+</tr><tr>
+   <td><button title="set filter to default values" id="Reset">Reset Filter</button></td>
+</tr><tr>
+   <td><button title="apply current filter settings" id="Apply">Apply Filter</button></td>
+</tr>
+</table>
+</div>
+
+<!---------->
+
+<div class="footer"></div>
+</div>
+
+<!---------->
+
+</div>
+
+
+<!---------------------------------------------------------------------------->
+
+<div id="dbDetail">
+<div id="dbDetailNav">
+<button title="close detail view" id="close">Close</button>
+<button title="show previous complex of current set" id="prev" title="previous">Prev</button>
+<input title="mark for download" type="checkbox" value="yes"></input>
+<button title="show next complex of current set" id="next">Next</button>
+</div>
+<section>
+<div id="dbDetailView">
+</div>
+<div id="dbDetailData">
+</div>
+</section>
+<div class="footer"></div>
+</div>
+
+<!-------------------->
+
+<script id="dbDetailViewTemplate" type="text/x-jquery-tmpl">
+<div>
+   <img title="click and drag left or right to rotate view" id="reelimg" src="{{imgUrl}}_01.jpg"
+      class="reel"
+      width="400px"
+      height="300px"
+      data-frames="30"
+      data-preloader=0
+      data-cursor="col-resize"
+      data-indicator=2
+      data-images="{{imgUrl}}_##.jpg"
+      data-revolution=300
+   >
+</div>
+<div><table><tbody>
+   <tr>
+      <td title="show bound binding partner 1"   data-cplx="B1"><input type="checkbox" value="yes">Bound 1</td>
+      <td title="show unbound binding partner 1" data-cplx="U1"><input type="checkbox" value="yes">Unbound 1</td>
+   </tr>
+   <tr>
+      <td title="show bound binding partner 2"   data-cplx="B2"><input type="checkbox" value="yes">Bound 2</td>
+      <td title="show unbound binding partner 2" data-cplx="U2"><input type="checkbox" value="yes">Unbound 2</td>
+   </tr>
+</tbody></table></div>
+</script>
+
+
+<!-------------------->
+
+<!-- <tr><td colspan="3"></td><td></td><td class="dtl-aln-gt" colspan="3"></td></tr> -->
+<script id="dbDetailDataAlnTemplate" type="text/x-jquery-tmpl">
+<div colspan=7 class="aln" data-id="aln1"><button title="show interface alignments">Interface Similarity: {{u1sim}}</button><div class="alnData"></div></div>
+<table>
+<colgroup>
+   <col span="1" class="border">
+   <col span="1" class="content">
+   <col span="1" class="border">
+   <col span="1" class="space">
+   <col span="1" class="border">
+   <col span="1" class="content">
+   <col span="1" class="border">
+</colgroup>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="x1"><td></td><th>Bound 1</th><td></td><td></td><td></td><th>Unbound 1</th><td></td></tr>
+<tr class="x1"><td></td><td></td><td></td><td></td><td></td><td>{{u1name}}</td><td></td></tr>
+<tr class="x1 spaceb"><td></td><td></td><td></td><td></td><td></td><td>{{u1type}}</td><td></td></tr>
+<tr class="x1 spaceb"><td></td><td><span class="emph">Chains:</span>     {{b1c}}   </td><td></td><td></td><td></td><td><span class="emph">Chains:</span>      {{u1c}}    </td><td></td></tr>
+<tr  class="x1"><td></td>     <td  title="chains participating in the interface"><span class="emph">Int. Chains:</span>{{b1ci}}  </td><td></td><td>&rarr;</td><td></td><td title="chains participating in the interface"><span class="emph">Int. Chains:</span> {{u1ci}}   </td><td></td></tr>
+<tr class="x1"><td></td>      <td title="number of C&alpha; atoms in the interface"><span class="emph">Int. C&alpha;:</span>    {{b1ca}}  </td><td></td><td></td><td></td><td title="RMSD to the interface of the bound structure"><span class="emph">Int. RMSD:</span>   {{u1irmsd}}</td><td></td></tr>
+<tr class="x1 cof"><td></td>  <td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span>  {{b1gaps}}</td><td></td><td></td><td></td><td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span>   {{u1gaps}} </td><td></td></tr>
+<tr class="x1 last spaceb"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+<tr class="bc spaceh"><td></td><td>{{bname}}</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="bc"       ><td></td><td>{{btype}}</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="bc spaceb"><td></td><td title="show interface cluster">{{bclus}}</td><td></td><td></td><td></td><td></td><td></td></tr>
+
+<tr class="x2"><td></td><th>Bound 2</th><td></td><td></td><td></td><th>Unbound 2</th><td></td></tr>
+<tr class="x2"><td></td><td></td><td></td><td></td><td></td><td>{{u2name}}</td><td></td></tr>
+<tr class="x2 spaceb"><td></td><td></td><td></td><td></td><td></td><td>{{u2type}}</td><td></td></tr>
+<tr class="x2 spaceb"><td></td><td><span class="emph">Chains:</span>     {{b2c}}   </td><td></td><td></td><td></td><td ><span class="emph">Chains:</span>      {{u2c}}    </td><td></td></tr>
+<tr class="x2"><td></td><td  title="chains participating in the interface"><span class="emph">Int. Chains:</span>{{b2ci}}  </td><td></td><td>&rarr;</td><td></td><td title="chains participating in the interface"><span class="emph">Int. Chains:</span> {{u2ci}}   </td><td></td></tr>
+<tr class="x2"><td></td><td  title="number of C&alpha; atoms in the interface"><span class="emph">Int. C&alpha;:</span>    {{b2ca}}  </td><td></td><td></td><td></td><td title="RMSD to the interface of the bound structure"><span class="emph">Int. RMSD:</span>   {{u2irmsd}}</td><td></td></tr>
+<tr class="x2 cof"><td></td><td  title="number of gaps in the interface"><span class="emph">Int. Gaps:</span>  {{b2gaps}}</td><td></td><td></td><td></td><td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span>   {{u2gaps}} </td><td></td></tr>
+<tr class="x2 last spaceb"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</table>
+<div class="aln" data-id="aln2"><button title="show interface alignments">Interface Similarity: {{u2sim}}</button><div class="alnData"></div>
+</script>
+
+<!-------------------->
+
+<script id="dbDetailAlignmentTemplate" type="text/x-jquery-tmpl">
+Chain {{chainb}}&rarr;{{chainu}}<br>
+<span title="indicator if residue belongs to interface region of bound structure">Interf.:{{int}}</span><br>
+<span title="amino acid sequence of the bound structures' chain">{{pdbb}}_{{chainb}}: {{alb}}</span><br>
+<span title="amino acid sequence of unbound structures' chain">{{pdbu}}_{{chainu}}: {{alu}}</span><br>
+<span title="alignend residues between the two chains">Match:  {{aln}}</span><br>
+{{nalint}}/{{nint}} interface residues aligned<br>
+</script>
+
+<!-------------------->
+
+
+<script id="dbDetailDataAlnPdbTemplate" type="text/x-jquery-tmpl">
+<span class="pdb" title="PDB link"><a target="_blank" href="http://www.rcsb.org/pdb/explore/explore.do?structureId={{pdb}}" target="_blank">{{pdb}}</a></span>, {{biounit}}
+</script>
+
+<!-------------------->
+
+<script id="dbDetailDataClusTemplate" type="text/x-jquery-tmpl">
+<button id="clus">{{numsim}}</button>
+</script>
+
+<!-------------------->
+
+<script id="dbDetailDataAlnCof1Template" type="text/x-jquery-tmpl">
+<tr class="x1"><td></td><td><span class="emph">Cofactors:</span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{bcof}}">{{bcof}}<a> {{bloc}}</td><td></td><td>{{arrow}}</td><td></td><td><span class="emph">Cofactors:</span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{ucof}}">{{ucof}}<a> {{uloc}}</td><td></td></tr>
+</script>
+<script id="dbDetailDataAlnCof1nTemplate" type="text/x-jquery-tmpl">
+<tr class="x1"><td></td><td><span class="emph"></span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{bcof}}">{{bcof}}<a> {{bloc}}</td><td></td><td>{{arrow}}</td><td></td><td><span class="emph"></span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{ucof}}">{{ucof}}<a> {{uloc}}</td><td></td></tr>
+</script>
+<script id="dbDetailDataAlnCof2Template" type="text/x-jquery-tmpl">
+<tr class="x2"><td></td><td><span class="emph">Cofactors:</span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{bcof}}">{{bcof}}<a> {{bloc}}</td><td></td><td>{{arrow}}</td><td></td><td><span class="emph">Cofactors:</span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{ucof}}">{{ucof}}<a> {{uloc}}</td><td></td></tr>
+</script>
+<script id="dbDetailDataAlnCof2nTemplate" type="text/x-jquery-tmpl">
+<tr class="x2"><td></td><td><span class="emph"></span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{bcof}}">{{bcof}}<a> {{bloc}}</td><td></td><td>{{arrow}}</td><td></td><td><span class="emph"></span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{ucof}}">{{ucof}}<a> {{uloc}}</td><td></td></tr>
+</script>
+
+
+<!---------------------------------------------------------------------------->
+
+<div id="dbSetTable">
+<div id="dbSetTableSc">
+<table>
+<thead>
+<tr>
+<th><input title="select all for download" type="checkbox" value="no"></input></th>
+<th></th>
+<th title="PDB ID and interfacing chains of bound structure">complex PDB</th>
+<th title="type of bound structure">complex type</th>
+<th title="number of C&alpha;-atoms in interface region of bound structure">#intf.-C&alpha;</th>
+<th title="cofactors in interface region of bound structure">complex cofactors</th>
+<th title="PDB ID and interfacing chains of first unbound structure">u1 PDB</th>
+<th title="sequential similarity to interface of bound structure">u1 sim.</th>
+<th title="cofactors occuring in interface of unbound structure">u1 cofactors</th>
+<th title="RMSD (in &Aring;) of the unbound structure to the bound structures interface">u1 iRMSD</th>
+<th title="PDB ID and interfacing chains of second unbound structure">u2 PDB</th>
+<th title="sequential similarity to interface of bound structure">u2 sim.</th>
+<th title="cofactors occuring in interface of unbound structure">u2 cofactors</th>
+<th title="RMSD (in &Aring;) of the unbound structure to the bound structures interface">u2 iRMSD</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table></div></div>
+
+<!-------------------->
+
+<script id="dbSetTableLinkTemplate" type="text/x-jquery-tmpl">
+<a href={{link}} target="_blank">{{text}}</a>
+</script>
+
+<!-------------------->
+
+<script id="dbSetTableBodyTemplate" type="text/x-jquery-tmpl">
+<tr data-id={{bIndex}}>
+<td title="select for download"><input type="checkbox" value="yes"></input></td>
+<td title="preview"><img src="./{{setPath}}/{{setCurr}}/preview/{{bIndex}}.jpg"></td>
+<td title="PDB ID and interfacing chains of bound structure">{{bName}}</td>
+<td title="type of bound structure">{{bType}}</td>
+<td title="number of C&alpha;-atoms in interface region of bound structure">{{bNumCa}}</td>
+<td title="cofactors in interface region of bound structure">{{bCof}}</td>
+<td title="PDB ID and interfacing chains of first unbound structure">{{u1Name}}</td>
+<td title="sequential similarity to interface of bound structure">{{u1Sim}}</td>
+<td title="cofactors occuring in interface of unbound structure">{{u1Cof}}</td>
+<td title="RMSD (in &Aring;) of the unbound structure to the bound structures interface">{{u1Rmsd}}</td>
+<td title="PDB ID and interfacing chains of second unbound structure">{{u2Name}}</td>
+<td title="sequential similarity to interface of bound structure">{{u2Sim}}</td>
+<td title="cofactors occuring in interface of unbound structure">{{u2Cof}}</td>
+<td title="RMSD (in &Aring;) of the unbound structure to the bound structures interface">{{u2Rmsd}}</td>
+</tr>
+</script>
+
+<!---------------------------------------------------------------------------->
+
+<div id="diagClus" title="Interface cluster">
+</div>
+
+<!---------------------------------------------------------------------------->
+
+<div id="Modal"><!-- loader --></div>
+
+<!---------------------------------------------------------------------------->
+
+</body>
+</html>

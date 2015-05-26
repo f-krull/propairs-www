@@ -1,0 +1,134 @@
+html {
+   overflow: -moz-scrollbars-vertical;
+   overflow-y: scroll;
+   font-family: verdana,arial,helvetica,sans-serif;
+   font-size: 13px;
+   color: #444;
+   height: 100%;
+}
+a {
+   color: inherit;
+}
+button {
+   cursor: pointer;
+}
+.nowrap {
+   white-space: nowrap;
+}
+
+.border {
+   border: 2px solid gray;
+    border-radius: 10px;
+}
+
+.padding {
+   padding: 20px;
+   font-size: 16px;
+   min-height: 480px;
+}
+.maxwidth {   
+   max-width: 950px;
+   margin-left: auto ;
+   margin-right: auto ;
+}
+
+.text p {
+   text-align: justify;
+}
+
+.text blockquote {
+   font-style: italic;
+   text-align: justify;
+}
+
+.fclear {
+   clear:both;
+}
+
+.fleft {
+    float: left;
+    margin: 0px 1em 0.2em 0px;
+    padding: 1px;
+}
+
+.fright {
+    float: right;
+    margin: 0px 0px 0.2em 1em;
+    padding: 1px;
+}
+
+
+.code {
+  font-size: 13px;
+  padding: 6px;
+  margin-left: 20px;
+  max-width: 600px;
+  background: #DDD;
+  font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+  font-weight: bold;
+}
+
+
+header {
+   margin: 0 auto;
+   height:126px;
+   width:478px;
+   background-image: url("propairs_logo.jpg");
+}
+
+nav ul {
+   margin: 0; 
+   padding: 0.0em;
+   text-align: center;
+   background-color: white;
+}
+
+nav ul li {
+   list-style: none;
+   display: inline-block;
+   margin: 0; 
+   padding: 0;
+}
+
+nav ul a, 
+nav ul span {
+   display:block;
+   width:8em;
+   margin: 0.2em 0 0 0;
+   padding: 0.6em 0.4em 0.2em 0.0em;
+   text-decoration: none; 
+   font-weight: bold;
+   border-top: 2px solid gray;
+   border-left: 2px solid gray;
+   border-right: 2px solid gray;
+   border-radius:10px 10px 0 0;
+   box-shadow: 0px 5px 10px white inset;
+   background-color: gray;
+   color: white;
+   /*
+   -webkit-transition: all .25s ease-in;
+   transition: all .25s ease-in;
+   */
+}
+
+nav ul a:hover, 
+nav ul span {
+   color: black; 
+   background-color: #FFAAAA;
+   border-color:  #FFAAAA;
+}
+
+nav ul a:hover {
+   margin-top: 0;
+   padding: 0.8em 0.4em 0.2em 0.0em;
+}
+
+div {
+    height: 99%;
+}
+
+object {
+    width: 100%;
+    min-height: 100%;
+}    
+

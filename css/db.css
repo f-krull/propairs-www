@@ -1,0 +1,417 @@
+html {
+   overflow: -moz-scrollbars-vertical;
+   overflow-y: scroll;
+   font-family: verdana,arial,helvetica,sans-serif;
+   font-size: 13px;
+   color: #444;
+}
+a {
+   color: inherit;
+}
+button {
+   cursor: pointer;
+}
+.nowrap {
+   white-space: nowrap;
+}
+
+/*----------------------------------------------------------------------------*/
+
+#Modal {
+   display: none;
+   position: fixed;
+   z-index: 1000;
+   top: 0;
+   left: 0;
+   height: 100%;
+   width: 100%;
+   background: rgba( 255, 255, 255, .5 )
+      url('./loader.gif')
+      50% 50%
+      no-repeat;
+}
+body.loading {
+    overflow: hidden;
+}
+body.loading #Modal {
+    display: block;
+}
+
+/*----------------------------------------------------------------------------*/
+
+#dbControl {
+   border-bottom: 2px solid gray;
+   border-radius: 10px;
+   padding: 10px;
+}
+#dbControl #Global {
+   margin: 10px;
+   border: 1px solid #DDD;
+   border-radius: 5px;
+   background-color: #DDD;
+}
+#dbControl #Global td {
+   padding-left: 20px;
+}
+#dbControl #Filter {
+   border: 2px solid #CCC;
+   border-radius: 5px;
+   margin-left: 10px;
+   display: inline-block;
+}
+#dbControl #Filter table {
+   float: left;
+   margin-left: 10px;
+   margin-right: 10px;
+}
+#dbControl #Filter table:nth-child(n+1):nth-child(-n+2) td:nth-child(1) {
+   text-align: right;
+}
+#dbControl table tr {
+   height: 30px;
+}
+#dbControl .range input {
+   width: 45px;
+   text-align: right;
+}
+#dbControl #Keyword {
+   width: 100px;
+}
+#dbControl .lim {
+   text-align: right;
+   min-width: 30px;
+   display: block;
+}
+#dbControl #Global td:nth-child(2) {
+   min-width: 270px;
+}
+#dbControl #downloadInfo {
+   min-width: 150px;
+}
+#dbControl #downloadLink {
+   min-width: 150px;
+}
+#dbControl #Filter table:nth-child(3) {
+   text-align: center;
+}
+#dbControl #Filter button {
+   min-width: 100px;
+}
+
+
+
+/*----------------------------------------------------------------------------*/
+
+#dbDetail {
+   border-bottom: 2px solid gray;
+   border-radius: 10px;
+   padding: 10px;
+   margin-top: 20px;
+   position: relative;
+   overflow: hidden;
+}
+#dbDetailNav {
+   border: 2px solid #DDD;
+   border-radius: 5px;
+   background-color: #DDD;
+   margin-left: 10px;
+   margin-right: 10px;
+   padding: 2px;
+}
+#dbDetailView {
+   width: 440px;
+   float: left;
+   overflow: hidden;
+   margin-top: 20px;
+   margin-right: 20px;
+}
+#dbDetailData {
+   float: left;
+   overflow: hidden;
+   margin-top: 20px;
+}
+#dbDetail .footer {
+   clear:both;
+}
+
+/*------------------*/
+
+#dbDetailNav #close {
+   margin-right: 20px;
+}
+
+/*------------------*/
+
+#dbDetailView table {
+   margin-left: 10px;
+}
+#dbDetailView table td {
+   font-size: 12px;
+   cursor: pointer;
+   border-radius: 5px;
+   margin: 5px;
+   padding: 2px;
+   min-width: 120px;
+   border: 2px solid #CCC;
+}
+
+#dbDetailView table tr:first-child td:nth-child(1) {
+   background-color: #DCC7FC;
+}
+#dbDetailView table tr:first-child td:nth-child(2) {
+   background-color: #C7D2FF;
+}
+#dbDetailView table tr:last-child td:nth-child(1) {
+   background-color: #D3FFBB;
+}
+#dbDetailView table tr:last-child td:nth-child(2) {
+   background-color: #BBFFBB;
+}
+#dbDetailView table td:hover {
+   border-color: #FFAAAA;
+}
+
+#dbDetailView > div:first-child {
+   border: 2px solid #CCC;
+   border-radius: 5px;
+   margin: 10px;
+   padding: 10px;
+}
+#dbDetailView .reel-indicator {
+   background-color: #CCC;
+}
+
+
+/*------------------*/
+
+#dbDetailData span.emph {
+   display: block;
+   float: left;
+   width: 100px;
+   min-height: 18px;
+   font-weight: bold;
+}
+#dbDetailData span.pdb {
+   width: 50px;
+   font-weight: bold;
+   color: #000;
+   font-size: 13px;
+   line-height: 30px;
+}
+#dbDetailData .aln {
+   text-align: center;
+   width: 540px;
+   margin: 10px;
+}
+#dbDetailData .aln > button {
+   width: 200px;
+}
+#dbDetailData .alnData {
+   text-align: left;
+   overflow: auto;
+   padding: 5px;
+}
+#dbDetailData .alnData > span {
+   font-family: "Courier",monospace;
+   white-space: pre;
+   font-size: 14px;
+   line-height: 18px;
+}
+
+/*------------------*/
+
+#dbDetailData table {
+   table-layout: fixed;
+   overflow: hidden;
+   border-spacing: 0;
+}
+#dbDetailData .border {
+   width: 10px;
+}
+#dbDetailData .space {
+   width: 30px;
+}
+#dbDetailData .content {
+   width: 240px;
+}
+#dbDetailData tr.spaceb td {
+   padding-bottom: 10px;
+}
+#dbDetailData tr.spaceh td {
+   padding-top: 10px;
+}
+/*-- middle --*/
+#dbDetailData table td:nth-child(4) {
+   text-align: center;
+   color: #000;
+   font-size: 14pt;
+}
+/*-- content --*/
+#dbDetailData td:nth-child(2), #dbDetailData td:nth-child(6),
+#dbDetailData th:nth-child(2), #dbDetailData th:nth-child(6){
+   border-left: 2px solid gray;
+   border-right: 2px solid gray;
+   text-indent: 5px;
+   line-height: 18px;
+}
+#dbDetailData th {
+   font-size: 14px;
+   line-height: 24px;
+   text-indent: 10px;
+   color: #FFF;
+   border: solid 2px;
+   text-align: left;
+}
+#dbDetailData tr.last td:nth-child(2), #dbDetailData tr.last td:nth-child(6) {
+   border-bottom: 2px solid gray;
+}
+/*-- b1 --*/
+#dbDetailData tr.x1 th:nth-child(2) {
+   background-color: #A183CE;
+   border: solid 2px #A183CE;
+}
+#dbDetailData tr.x1 td:nth-child(2) {
+   background-color: #DCC7FC;
+   border-color: #A183CE;
+}
+/*-- u1 --*/
+#dbDetailData tr.x1 th:nth-child(6) {
+   background-color: #2A41A0;
+   border: solid 2px #2A41A0;
+}
+#dbDetailData tr.x1 td:nth-child(6) {
+   background-color: #C7D2FF;
+   border-color: #2A41A0;
+}
+/*-- b2 --*/
+#dbDetailData tr.x2 th:nth-child(2) {
+   background-color: #78AD5C;
+   border: solid 2px #78AD5C;
+}
+#dbDetailData tr.x2 td:nth-child(2) {
+   background-color: #D3FFBB;
+   border-color: #78AD5C;
+}
+/*-- u2 --*/
+#dbDetailData tr.x2 th:nth-child(6) {
+   background-color: #2F813C;
+   border: solid 2px #2F813C;
+}
+#dbDetailData tr.x2 td:nth-child(6) {
+   background-color: #BBFFBB;
+   border-color: #2F813C;
+}
+/*-- bc --*/
+#dbDetailData tr.bc td:nth-child(2) {
+   border: 2px solid #CCC;
+   background-color: #CCC;
+}
+#dbDetailData tr.bc td:nth-child(6) {
+   border: 0px solid #FFF;
+}
+/*-- b gray --*/
+/* col */
+#dbDetailData tr td:nth-child(1) {
+   border: 2px solid #CCC;
+   background-color: #CCC;
+}
+#dbDetailData tr td:nth-child(3) {
+   border: 2px solid #CCC;
+   background-color: #CCC;
+}
+/* row */
+#dbDetailData tr:first-child td {
+   border: 0px solid #FFF;
+   padding: 5px;
+}
+#dbDetailData tr:last-child td {
+   border: 0px solid #FFF;
+   padding: 5px;
+}
+#dbDetailData tr:first-child td:nth-child(2) {
+   border: 2px solid #CCC;
+   background-color: #CCC;
+}
+#dbDetailData tr:last-child td:nth-child(2) {
+   border: 2px solid #CCC;
+   background-color: #CCC;
+}
+/* corners */
+#dbDetailData tr:first-child td:nth-child(1) {
+   border-radius: 5px 0px 0px 0px;
+}
+#dbDetailData tr:first-child td:nth-child(3) {
+   border-radius: 0px 5px 0px 0px;
+}
+#dbDetailData tr:last-child td:nth-child(1) {
+   border-radius: 0px 0px 0px 5px;
+}
+#dbDetailData tr:last-child td:nth-child(3) {
+   border-radius: 0px 0px 5px 0px;
+}
+
+/*----------------------------------------------------------------------------*/
+
+#dbSetTable {
+   font-size: 10px;
+   font-weight: bold;
+   margin-top: 20px;
+}
+#dbSetTableSc {
+   max-height: 600px;
+   overflow: auto;
+   margin: 10px;
+}
+#dbSetTable table {
+   padding: 10px;
+}
+#dbSetTable table thead {
+   background-color: #DDD;
+   color: #000;
+   border: 10px solid black;
+}
+#dbSetTable table tbody {
+   border-collapse: collapse;
+}
+#dbSetTable table tbody tr {
+   outline: 2px solid transparent;
+   -moz-outline-radius: 5px;
+   border-radius: 5px;
+}
+#dbSetTable table tbody tr:hover {
+   cursor: pointer;
+   outline: 2px solid #FFAAAA;
+}
+#dbSetTable table td:hover {
+   outline: none;
+}
+
+#dbSetTable table td img {
+   width: 20px;
+   height: 20px;
+}
+
+#dbSetTable tr td:nth-child(n+7):nth-child(-n+10) {
+   background-color:  #C7D2FF;
+}
+#dbSetTable tr td:nth-child(n+11):nth-child(-n+14) {
+   background-color:  #BBFFBB;
+}
+#dbSetTable tr.marked {
+   outline: 2px solid #000;
+}
+
+/*----------------------------------------------------------------------------*/
+
+#diagClus {
+   display: none;
+   font-family: "Courier",monospace;
+   white-space: pre;
+   font-size: 14px;
+   line-height: 18px;
+}
+
+.ui-dialog-titlebar {
+   background-color: #888;
+}
+
