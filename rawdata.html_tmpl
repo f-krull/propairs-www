@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <link rel="shortcut icon" href="css/propairs_logo_fav.ico">
+   <link rel="stylesheet" href="css/db.css" type="text/css"/>
+   <link rel="stylesheet" href="css/propairs.css" type="text/css"/>
+   <script type="text/javascript" src="js/jquery.min.js"></script>
+   <script type="text/javascript" src="js/ga.js"></script>
+   <title>ProPairs</title>
+</head>
+
+
+<body>
+   <a href="https://github.com/propairs/propairs"><img style="position: absolute; top: 0; right: 0; border: 0;"
+		src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+   <a href="index.html"><header></header></a>
+   <nav>  
+   <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="database.html">Database</a></li>
+        <li><span>Raw data</span></li>
+        <li><a href="sourcecode.html">Source code</a></li>
+        <li><a href="about.html">About</a></li>
+   </nav>
+   </ul>
+   
+   
+
+    <div id="body" class="border padding maxwidth">
+    
+{{RAWDATA}}
+
+      <h2>Column Header Descriptions</h2>
+      <ul>
+      <li><b><a href="https://github.com/propairs/propairs/blob/master/config/columns_def.sh">columns_def.sh</a></b></li>
+      descriptions for all columns found in the raw data files
+      </ul>
+
+    </div>
+    
+   
+    
+    
+    
+  <footer class="maxwidth">
+     <p>© 2015 by F. Krull, Freie Universität Berlin, Macromolecular Modelling Group, Prof. E. W. Knapp</p>
+  </footer>
+</body>
+</html>
+
+
