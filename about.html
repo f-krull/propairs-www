@@ -12,9 +12,9 @@
 
 
 <body>
-   <a href="https://github.com/propairs/propairs"><img style="position: absolute; top: 0; right: 0; border: 0;"
+   <header><a href="https://github.com/propairs/propairs"><img style="position: absolute; top: 0; right: 0; border: 0;"
 		src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-   <a href="index.html"><header></header></a>
+   <a href="index.html"></a></header>
    <nav>  
    <ul>
         <li><a href="index.html">Home</a></li>
@@ -114,7 +114,8 @@
     <p>In many cases the individual binding partners of a docking complex consist of multiple chains and of course this 
     is also the case for the suitable unbound structures. 
     So how to recognize the unbound structure within the complex structure if both consist of multiple chains? 
-    The ProPairs algorithm computes the maximum common subgraph between the potential complex and the unbound structure: 
+    The ProPairs algorithm computes the maximum common subgraph between the potential complex and the unbound structure:
+    </p> 
        <ul>
        <li>
        Nodes correspond to chains and edges to chain interfaces. 
@@ -126,7 +127,7 @@
        Chain interfaces are matched if they show high sequence identity of the residues involved in the interaction.
        </li>
        </ul>
-    First, the algorithm looks for an initial assignment (cB1 to cU1) that is specified by the seed and then tries to expand this solution by further assignments. 
+    <p>First, the algorithm looks for an initial assignment (cB1 to cU1) that is specified by the seed and then tries to expand this solution by further assignments. 
     </p>
     
     <img class="fright" style="width: 281px; height: 211px" src="img/about/seed_4.jpg"></img>
@@ -146,7 +147,7 @@
        <li>Find cofactors in the interface regions and report matchings</li>
        <li>Compute interface-RMSD of cB1 and cU1</li>
        </ul>
-    If a legitimate docking complex was found, we get: the interface specified and 
+    <p>If a legitimate docking complex was found, we get: the interface specified and 
     the chains of the unbound structure assigned to the bound binding partner.
     </p>
      
@@ -180,15 +181,16 @@
     the pre-filter should have a zero false negative rate such that no seeds that result in a legitimate docking complex are filtered
     out. There are two basic requirements a seed needs to fulfill in order to give a legitimate
     docking complex: 
+    </p>
        <ol>
        <li>cU1 needs to have a high sequence identity to cB1.</li>
        <li>pdbU does not contain any chain that has high sequence identity to cB2.</li>
        </ol>
-       Additionally, to reduce the number of seeds resulting in identical assignments, we require:
+    <p>Additionally, to reduce the number of seeds resulting in identical assignments, we require:
+    </p>
        <ol start="3">
        <li>cB1 and cB2 need to be connected.</li>
        </ol>
-    </p>
     
     <p>To be able to produce seeds that are able to meet these requirements, we compute
     sequence identities between all chains within the PDB. We also compute
@@ -208,11 +210,11 @@
     
     <p>In the previous steps we proposed a method to specify the interface chains for protein docking complexes. 
     As a result we obtain the large ProPairs dataset. This set contains two types of redundancies: 
+    </p>
        <ul>
        <li> redundancies between protein docking complexes </li>
        <li> redundancies between the unbound structures assigned to a docking complex </li>
        </ul>    
-    </p>
 
     <h3>Detection of Similar Interfaces
     </h3>
