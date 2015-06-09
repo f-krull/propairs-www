@@ -101,7 +101,7 @@
     If any of these requirements are not met, the answer of the algorithm is "no". 
     The idea is to ask a very specific question that gives a deterministic answer. 
     Later we show how to use a pre-filter to find promising questions and how to 
-    combine all the answers to generate the ProPairs dataset. 
+    combine all the answers to generate the ProPairs data set. 
     </p>
       
 
@@ -203,13 +203,13 @@
     results in a legitimate interface partition. 
     </p>
     
-    <h2>From the Large to the Small ProPairs Dataset
+    <h2>From the Large to the Small ProPairs Data Set
     </h2>
     
     <img class="fright" style="width: 200; height: 152px" src="img/about/similar-interfaces_example.jpg"></img>
     
     <p>In the previous steps we proposed a method to specify the interface chains for protein docking complexes. 
-    As a result we obtain the large ProPairs dataset. This set contains two types of redundancies: 
+    As a result we obtain the large ProPairs data set. This set contains two types of redundancies: 
     </p>
        <ul>
        <li> redundancies between protein docking complexes </li>
@@ -230,11 +230,11 @@
     n1, m1 and p2 consists of the two docking units n2, m2. The <a href="https://github.com/f-krull/xtal/tree/master/src/xtaluniquecomp">algorithm</a> first 
     computes sequence alignments between the docking units (n1->n2 and m1->m2) and then 
     analyzes the coverage of the residues within the interfaces. The cross-combination (n1->m2 and m1->n2) is also considered.
-    Once, all pairwise interfaces of the large ProPairs dataset are computed, we apply hierarchical clustering. 
+    Once, all pairwise interfaces of the large ProPairs data set are computed, we apply hierarchical clustering. 
     </p>
     
     
-    <h3>The Small (Non-redundant) ProPairs Dataset
+    <h3>The Small (Nonredundant) ProPairs Data Set
     </h3>
     
     <h4>Representative Docking Complexes
