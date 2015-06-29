@@ -136,3 +136,6 @@ object {
     min-height: 100%;
 }    
 
+#optOut {
+	font-size: 11px;	
+}
