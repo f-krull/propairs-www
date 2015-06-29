@@ -1000,6 +1000,7 @@ $('#dbSetTable thead').on('click', 'input', function(e){
 $('#dbSetTable tbody').on('click', 'td', function(e){
    e.preventDefault();
    console.log(">row click td: " + this);
+   ga('send', 'event', 'button', 'click', 'Detail Open');
    var id = $(this).closest('tr').data('id');
    console.log("  " + id);
    dbSet.setCurr(id);
@@ -1009,6 +1010,7 @@ $('#dbSetTable tbody').on('click', 'td', function(e){
 $('#dbDetailView').on('click', 'td', function(e){
    var cplx = $(this).closest("td").data('cplx');
    console.log(">view click: " + cplx);
+   ga('send', 'event', 'button', 'click', 'Detail View');
    if (e.target.nodeName == "TD")  {
       dbDetail.readImgCtrl(cplx, true);
       dbDetail.updateView(dbConfig, dbSetSelector.getCurr());   
@@ -1021,9 +1023,11 @@ $('#dbDetailView').on('click', 'td', function(e){
 $('#dbDetailData').on('click', '.aln button', function(e){
    var id = $(this).closest('.aln').data('id');
    console.log(">alnclick: " + id);
+   ga('send', 'event', 'button', 'click', 'Alignment');
    dbDetail.toggleAln(id);
 });
 $('#dbDetailData').on('click', '#clus', function(e){
+   ga('send', 'event', 'button', 'click', 'Cluster');
    console.log(">clus: ");
    dbDetail.showClus();
 });
@@ -1038,6 +1042,7 @@ $('#dbDetailNav #close').on('click', function(e){
 $('#dbDetailNav #next').on('click', function(e){
    e.preventDefault();
    console.log(">next click:");
+   ga('send', 'event', 'button', 'click', 'Detail Next');
    var next = dbSet.getNext();
    console.log("  from " + dbSet.getCurr() + " to " + next);
    dbSet.setCurr(next);
@@ -1046,6 +1051,7 @@ $('#dbDetailNav #next').on('click', function(e){
 $('#dbDetailNav #prev').on('click', function(e){
    e.preventDefault();
    console.log(">prev click:");
+   ga('send', 'event', 'button', 'click', 'Detail Prev');
    var prev = dbSet.getPrev();
    console.log("  from " + dbSet.getCurr() + " to " + prev);
    dbSet.setCurr(prev);
@@ -1085,6 +1091,7 @@ $('#dbControl #Reset').on('click', function(e){
 });
 $('#dbControl #Apply').on('click', function(e){
    console.log(">dbControl click apply:");
+   ga('send', 'event', 'button', 'click', 'Apply');
    loader.busy();
    window.setTimeout(function() {
       dbSet.update(dbSetSelector.getCurr(), dbFilter);
@@ -1095,6 +1102,7 @@ $('#dbControl #Apply').on('click', function(e){
 });
 $('#dbControl #ShowFilter').on('click', function(e){
    console.log(">dbControl click ShowFilter:");
+   ga('send', 'event', 'button', 'click', 'ShowFilter');
    dbFilter.show();
 });
 $('#dbControl #HideFilter').on('click', function(e){
@@ -1104,6 +1112,7 @@ $('#dbControl #HideFilter').on('click', function(e){
 // download
 $("#downloadInfo").click(function (e) {
    console.log("DbDownloader:");
+   ga('send', 'event', 'button', 'click', 'Download');
    // check bound/unbound selection
    var dlb = true;
    var dlu = true;
