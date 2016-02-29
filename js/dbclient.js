@@ -426,6 +426,7 @@ DbSet.prototype.update = function (setName, dbFilter) {
             .replace(/{{bName}}/g,   dbSet._dbSetLink.getPdb(row['bName']))
             .replace(/{{bType}}/g,   row['bType'].toLowerCase())
             .replace(/{{bNumCa}}/g,  row['bNumCa'])
+            .replace(/{{bNumS2}}/g,  row['bNumS2'])
             .replace(/{{bCof}}/g,    dbSet._dbSetLink.getHet(row['bCof']))
             .replace(/{{u1Name}}/g,  dbSet._dbSetLink.getPdb(row['u1Name']))
             .replace(/{{u1Sim}}/g,   convertIntSim(row['u1Sim']))
