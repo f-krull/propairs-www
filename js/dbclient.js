@@ -169,11 +169,13 @@ DbFilter.prototype.reset = function() {
    this._dbControl.find("#Cofactors").val("a");
    this._dbControl.find("#RangeTarget").val("1");
    this._dbControl.find("#SimMin").val("");
-   this._dbControl.find("#IrmsdMin").val("");
-   this._dbControl.find("#IcaMin").val("");
    this._dbControl.find("#SimMax").val("");
-   this._dbControl.find("#IrmsdMax").val("");
+   this._dbControl.find("#IcaMin").val("");
    this._dbControl.find("#IcaMax").val("");
+   this._dbControl.find("#IrmsdMin").val("");
+   this._dbControl.find("#IrmsdMax").val("");
+   this._dbControl.find("#Is2Min").val("");   
+   this._dbControl.find("#Is2Max").val("");
 }
 DbFilter.prototype.show = function() {
    this._dbFilterBtn.prop("disabled", true);
@@ -258,6 +260,11 @@ DbFilter.prototype._filterIca = function(set, both) {
    var vmax = parseFloat(this._dbControl.find("#IcaMax").val());
    return DbFilter.prototype._isOk(set, "bNumCa", "bNumCa", vmin, vmax, both);
 }
+DbFilter.prototype._filterIs2 = function(set, both) {
+   var vmin = parseFloat(this._dbControl.find("#Is2Min").val());
+   var vmax = parseFloat(this._dbControl.find("#Is2Max").val());
+   return DbFilter.prototype._isOk(set, "bNumS2", "bNumS2", vmin, vmax, both);
+}
 DbFilter.prototype._filterPaired = function(set) {
    var po = this._dbControl.find("#IncludeIncompl").prop('checked');
    if (po == true) {
@@ -340,10 +347,17 @@ DbFilter.prototype._analyzeIca = function(set) {
    var vmax = vu1[1];
    this._dbControl.find("#IcaRange").html("" + vmin + "-" + vmax);
 }
+DbFilter.prototype._analyzeIs2 = function(set) {
+   var vu1 = DbFilter.prototype._getMinMax.call(this, set, "bNumS2");
+   var vmin = vu1[0];
+   var vmax = vu1[1];
+   this._dbControl.find("#Is2Range").html("" + vmin + "-" + vmax);
+}
 DbFilter.prototype.analyze = function(set) {
    DbFilter.prototype._analyzeSim.call(this, set);
    DbFilter.prototype._analyzeIca.call(this, set);
    DbFilter.prototype._analyzeIrmsd.call(this, set);
+   DbFilter.prototype._analyzeIs2.call(this, set);
 }
 DbFilter.prototype.apply = function(set) {
    var fset = set;
@@ -356,6 +370,7 @@ DbFilter.prototype.apply = function(set) {
    fset = DbFilter.prototype._filterSim.call(this, fset, both);
    fset = DbFilter.prototype._filterIca.call(this, fset, both);
    fset = DbFilter.prototype._filterIrmsd.call(this, fset, both);
+   fset = DbFilter.prototype._filterIs2.call(this, fset, both);
    this._dbControl.find("#Stats").html(countDirectSubelements(fset) + "/" + countDirectSubelements(set));
    
    var keys = [];
