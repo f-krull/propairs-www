@@ -31,7 +31,7 @@
     
 {{RAWDATA}}
 
-      <h2>Column Descriptions</h2>
+      <h2>Column Header Descriptions</h2>
       <ul>
       <li><b><a href="https://github.com/propairs/propairs/blob/master/config/columns_def.sh">columns_def.sh</a></b></li>
       descriptions for all columns found in the raw data files
@@ -44,7 +44,7 @@
     
     
   <footer class="maxwidth">
-     <p>© 2015 by F. Krull, Freie Universität Berlin, Macromolecular Modelling Group, Prof. E. W. Knapp</p>
+     <p>© 2016 by F. Krull, Freie Universität Berlin, Macromolecular Modelling Group, Prof. E. W. Knapp</p>
   </footer>
 </body>
 </html>
