@@ -873,9 +873,14 @@ DownloadInfo.prototype.start = function(len) {
    this._curr = 0;
    this._len = len;
 }
-DownloadInfo.prototype.progress = function() {
+DownloadInfo.prototype.dlNewFile = function() {
    this._curr++;
-   DownloadInfo.prototype.status.call(this);
+   console.log("DownloadInfo: dl" + (this._curr / this._len * 100).toFixed(1));
+   DownloadInfo.prototype.updateStatus.call(this, "downloading", (this._curr / this._len * 100).toFixed(1) + "%");
+}
+DownloadInfo.prototype.cmprProgress = function(progress) {
+   console.log("DownloadInfo: cmpr " + progress);
+   DownloadInfo.prototype.updateStatus.call(this, "compressing",  progress.toFixed(1) + "%");
 }
 DownloadInfo.prototype.done = function(dlName, dlUrl) {
    this._curr = this._len;
@@ -886,10 +891,8 @@ DownloadInfo.prototype.done = function(dlName, dlUrl) {
    link.href = dlUrl;
    link.click();
 }
-DownloadInfo.prototype.status = function() {
-   console.log("DownloadInfo: " + Math.round(this._curr / this._len * 1000) / 10);
-   this._dlInfo.text("downloading (" + Math.round(this._curr / this._len * 1000) / 10 + "%)");
-   return this._curr / this._len;
+DownloadInfo.prototype.updateStatus = function(m, str) {
+   this._dlInfo.text(m + "(" + str + ")");
 }
 
 
@@ -941,7 +944,7 @@ DownLoader.prototype._notify = function(curr) {
          }
          _this._zip.file(fn, data);
          // keep track of progress
-         downloadInfo.progress();
+         downloadInfo.dlNewFile();
          // download next file
          DownLoader.prototype._notify.call(_this, curr + 1);
       }, function() {
@@ -949,11 +952,15 @@ DownLoader.prototype._notify = function(curr) {
       });
    } else if (this._files.length > 0) {
       console.log("DownLoader: done");
-      _this._zip.generateAsync({type:"blob", onUpdate: function () { console.log("update"); }})
-         .then(function (blob) {
-            downloadInfo.done('ProPairsSet.zip', window.URL.createObjectURL(blob));
+      var p = _this._zip.generateAsync({type:"blob"}, function (meta) {
+            //FIXME: these update messages are logged to console but are not
+            //       rendered on webpage - However, all following code
+            //       gets executed right away (non-blocking)
+            downloadInfo.cmprProgress(meta.percent);
          });
-      
+      p.then(function (blob) {
+         downloadInfo.done('ProPairsSet.zip', window.URL.createObjectURL(blob));
+      });
       loader.ready();
    }
 }
