@@ -391,10 +391,10 @@ body.loading #Modal {
    height: 20px;
 }
 
-#dbSetTable tr td:nth-child(n+7):nth-child(-n+10) {
+#dbSetTable tr td:nth-child(n+8):nth-child(-n+11) {
    background-color:  #C7D2FF;
 }
-#dbSetTable tr td:nth-child(n+11):nth-child(-n+14) {
+#dbSetTable tr td:nth-child(n+12):nth-child(-n+15) {
    background-color:  #BBFFBB;
 }
 #dbSetTable tr.marked {
