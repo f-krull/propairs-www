@@ -949,9 +949,11 @@ DownLoader.prototype._notify = function(curr) {
       });
    } else if (this._files.length > 0) {
       console.log("DownLoader: done");
-      // we are done -> compress
-      var blob = _this._zip.generate({compression:"DEFLATE",type:"blob"});
-      downloadInfo.done('ProPairsSet.zip', window.URL.createObjectURL(blob));
+      _this._zip.generateAsync({type:"blob", onUpdate: function () { console.log("update"); }})
+         .then(function (blob) {
+            downloadInfo.done('ProPairsSet.zip', window.URL.createObjectURL(blob));
+         });
+      
       loader.ready();
    }
 }
