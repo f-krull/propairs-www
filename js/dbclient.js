@@ -194,9 +194,12 @@ DbFilter.prototype._getMinMax = function(set, key) {
          vmax = Math.max(vmax, row[key]);
       }
    });
+   if (vmin == Number.MAX_VALUE) {
+      vmin = 0;
+   }
    return [vmin, vmax]
 }
-DbFilter.prototype._isOkMinMax = function(set, key1, key2, vmin, vmax, both) {
+DbFilter.prototype._isOkMinMa = function(set, key1, key2, vmin, vmax, both) {
    var ret = {};
    $.each(set, function(rowkey, row) {
       var ok1 = isNaN(row[key1]) == false && row[key1] >= vmin && row[key1] <= vmax;
