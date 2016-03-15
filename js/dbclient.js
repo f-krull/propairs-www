@@ -919,6 +919,17 @@ DownLoader.prototype.start = function(files) {
       alert("Error: No PDB files selected! Try to mark entries by their checkboxes.");
       return;
    }
+   var maxFiles = 800;
+   if (files.length > maxFiles) {
+      alert("Notice: A data set containing " + files.length + " coordinate files \n" + 
+            "will be created now. " + "Depending on your browser \n" +
+            "this process might be slow. \n\n" +
+            "You can speed things up by deselecting entries. \n" +
+            "Alternatively, you can download the complete set \n" + 
+            "of coordinate files from the \"Raw Data\" section \n\n" + 
+            "The download will start now."
+      );
+   }
    loader.busy();
    this._files = files;
    DownLoader.prototype._notify.call(this, 0);
