@@ -51,7 +51,9 @@ $(document).ready(function() {
 			this._optOut.html(this._tmplOut);
 			document.cookie = disableStr + '=false; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
 			window[disableStr] = false;	
+   		ga('send', 'event', 'button', 'click', 'optIn');
 		} else {
+			ga('send', 'event', 'button', 'click', 'optOut');
 			this._optOut.html(this._tmplIn);
 			document.cookie = disableStr + '=true; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
 			window[disableStr] = true;
