@@ -926,7 +926,7 @@ DownLoader.prototype.start = function(files) {
             "this process might be slow. \n\n" +
             "You can speed things up by deselecting entries. \n" +
             "Alternatively, you can download the complete set \n" + 
-            "of coordinate files from the \"Raw Data\" section \n\n" + 
+            "of coordinate files from the \"Raw data\" section \n\n" +
             "The download will start now."
       );
    }
