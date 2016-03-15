@@ -194,6 +194,9 @@ DbFilter.prototype._getMinMax = function(set, key) {
          vmax = Math.max(vmax, row[key]);
       }
    });
+   if (vmin == Number.MAX_VALUE) {
+      vmin = 0;
+   }
    return [vmin, vmax]
 }
 DbFilter.prototype._isOkMinMax = function(set, key1, key2, vmin, vmax, both) {
