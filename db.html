@@ -34,28 +34,27 @@
 <div id="Filter">
 <table class ="range">
 <tr title="range: number of C&alpha;-atoms in interface region of bound structure">
-   <td>#Intf.-C&alpha;:</td>
+   <td>Num. Interface-C&alpha;:</td>
    <td><input id="IcaMin" value=""></input></td>
    <td><input id="IcaMax" value=""></input></td>
-   <td><span class="lim" id="IcaRange"></span></td>
+   <td><input id="IncludeIca" type="checkbox"></input></td>
 </tr><tr title="range: number of S2-bonds between binding partners of bound structure">
-   <td>#S2-bonds:</td>
+   <td>Num. S2-bonds:</td>
    <td><input id="Is2Min" value=""></input></td>
    <td><input id="Is2Max" value=""></input></td>
-   <td><span class="lim" id="Is2Range"></span></td>   
+   <td><input id="IncludeIs2" type="checkbox"></input></td>
 </tr><tr title="range: sequential similarity of the unbound structure to the interface of the bound structure">
-   <td>Sim.:</td>
+   <td>Interface similarity:</td>
    <td><input id="SimMin" value=""></input></td>
    <td><input id="SimMax" value=""></input></td>
-   <td><span class="lim" id="SimRange"></span></td>
+   <td><input id="IncludeSim" type="checkbox"></input></td>
 </tr><tr title="range: RMSD of the unbound structure to the bound structures interface">
-   <td>iRMSD:</td>
+   <td>Interface-RMSD:</td>
    <td><input id="IrmsdMin" value=""></input></td>
    <td><input id="IrmsdMax" value=""></input></td>
-   <td><span class="lim" id="IrmsdRange"></span></td>
-   
+   <td><input id="IncludeIrmsd" type="checkbox"></input></td>
 </tr><tr title="the range is applied to both or at least one of the unbound structures">
-   <td>apply to:</td><td colspan=5><select id="RangeTarget"><option value="1">at least one</option><option value="2">both unbound</option></select></td>
+   <td>Apply to:</td><td colspan=5><select id="RangeTarget"><option value="1">at least one</option><option value="2">both unbound</option></select></td>
 </tr></table>
 <table>
 <tr title="cofactors in the interface of complex">

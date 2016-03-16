@@ -158,10 +158,15 @@ function DbFilter() {
    this._dbControl   =  $('#dbControl');
    this._dbFilter    =  $('#dbControl #Filter');
    this._dbFilterBtn =  $('#dbControl #ShowFilter');
-   this.reset.apply(this);
    this._dbFilter.hide();
    this._dbFilter.prop("disabled", false);
+   this._setOrg = {};
 }
+DbFilter.prototype.init = function(setOrg) {
+   this._setOrg = setOrg;
+   DbFilter.prototype.reset.call(this);
+}
+
 DbFilter.prototype.reset = function() {
    this._dbControl.find("#IncludeIncompl").prop('checked', false);
    this._dbControl.find("#IncludeNMR").prop('checked', true);
@@ -176,6 +181,12 @@ DbFilter.prototype.reset = function() {
    this._dbControl.find("#IrmsdMax").val("");
    this._dbControl.find("#Is2Min").val("");   
    this._dbControl.find("#Is2Max").val("");
+   this._dbControl.find("#IcaMin").prop("disabled", true);
+   this._dbControl.find("#IncludeIca").prop('checked', false);
+   this._dbControl.find("#IncludeIs2").prop('checked', false);
+   this._dbControl.find("#IncludeSim").prop('checked', false);
+   this._dbControl.find("#IncludeIrmsd").prop('checked', false);
+   DbFilter.prototype.update.call(this);
 }
 DbFilter.prototype.show = function() {
    this._dbFilterBtn.prop("disabled", true);
@@ -249,21 +260,33 @@ DbFilter.prototype._isOk = function(set, key1, key2, vmin, vmax, both) {
    return set;
 }
 DbFilter.prototype._filterSim = function(set, both) {
+   if (!this._dbControl.find("#IncludeSim").prop('checked')) {
+      return set;
+   }
    var vmin = parseFloat(this._dbControl.find("#SimMin").val()) / 100;
    var vmax = parseFloat(this._dbControl.find("#SimMax").val()) / 100;
    return DbFilter.prototype._isOk(set, "u1Sim", "u2Sim", vmin, vmax, both);
 }
 DbFilter.prototype._filterIrmsd = function(set, both) {
+   if (!this._dbControl.find("#IncludeIrmsd").prop('checked')) {
+      return set;
+   }
    var vmin = parseFloat(this._dbControl.find("#IrmsdMin").val());
    var vmax = parseFloat(this._dbControl.find("#IrmsdMax").val());
    return DbFilter.prototype._isOk(set, "u1Rmsd", "u2Rmsd", vmin, vmax, both);
 }
 DbFilter.prototype._filterIca = function(set, both) {
+   if (!this._dbControl.find("#IncludeIca").prop('checked')) {
+      return set;
+   }
    var vmin = parseFloat(this._dbControl.find("#IcaMin").val());
    var vmax = parseFloat(this._dbControl.find("#IcaMax").val());
    return DbFilter.prototype._isOk(set, "bNumCa", "bNumCa", vmin, vmax, both);
 }
 DbFilter.prototype._filterIs2 = function(set, both) {
+   if (!this._dbControl.find("#IncludeIs2").prop('checked')) {
+      return set;
+   }
    var vmin = parseFloat(this._dbControl.find("#Is2Min").val());
    var vmax = parseFloat(this._dbControl.find("#Is2Max").val());
    return DbFilter.prototype._isOk(set, "bNumS2", "bNumS2", vmin, vmax, both);
@@ -330,40 +353,46 @@ DbFilter.prototype._filterKeyword = function(set) {
    });
    return ret;
 }
-DbFilter.prototype._analyzeSim = function(set) {
-   var vu1 = DbFilter.prototype._getMinMax.call(this, set, "u1Sim");
-   var vu2 = DbFilter.prototype._getMinMax.call(this, set, "u2Sim");
-   var vmin = Math.min(vu1[0], vu2[0]);
-   var vmax = Math.min(vu1[1], vu2[1]);
-   this._dbControl.find("#SimRange").html("" + Math.round(vmin * 100) + "-" + Math.round(vmax * 100) + " %");
+DbFilter.prototype._analyzeSim = function(set, active) {
+   if (!active) {
+      var vu1 = DbFilter.prototype._getMinMax.call(this, set, "u1Sim");
+      var vu2 = DbFilter.prototype._getMinMax.call(this, set, "u2Sim");
+      var vmin = Math.min(vu1[0], vu2[0]);
+      var vmax = Math.max(vu1[1], vu2[1]);
+      this._dbControl.find("#SimMin").val(Math.floor(vmin * 100));
+      this._dbControl.find("#SimMax").val(Math.ceil(vmax * 100));
+   }
 }
-DbFilter.prototype._analyzeIrmsd = function(set) {
-   var vu1 = DbFilter.prototype._getMinMax.call(this, set, "u1Rmsd");
-   var vu2 = DbFilter.prototype._getMinMax.call(this, set, "u2Rmsd");
-   var vmin = Math.min(vu1[0], vu2[0]);
-   var vmax = Math.min(vu1[1], vu2[1]);
-   this._dbControl.find("#IrmsdRange").html("" + vmin + "-" + vmax + " &Aring;");
+DbFilter.prototype._analyzeIrmsd = function(set, active) {
+   if (!active) {
+      var vu1 = DbFilter.prototype._getMinMax.call(this, set, "u1Rmsd");
+      var vu2 = DbFilter.prototype._getMinMax.call(this, set, "u2Rmsd");
+      var vmin = Math.min(vu1[0], vu2[0]);
+      var vmax = Math.max(vu1[1], vu2[1]);
+      this._dbControl.find("#IrmsdMin").val(Math.floor(vmin));
+      this._dbControl.find("#IrmsdMax").val(Math.ceil(vmax));
+   }
 }
-DbFilter.prototype._analyzeIca = function(set) {
-   var vu1 = DbFilter.prototype._getMinMax.call(this, set, "bNumCa");
-   var vmin = vu1[0];
-   var vmax = vu1[1];
-   this._dbControl.find("#IcaRange").html("" + vmin + "-" + vmax);
+DbFilter.prototype._analyzeIca = function(set, active) {
+   if (!active) {
+      var vu1 = DbFilter.prototype._getMinMax.call(this, set, "bNumCa");
+      var vmin = vu1[0];
+      var vmax = vu1[1];
+      this._dbControl.find("#IcaMin").val(vmin);
+      this._dbControl.find("#IcaMax").val(vmax);
+   }
 }
-DbFilter.prototype._analyzeIs2 = function(set) {
-   var vu1 = DbFilter.prototype._getMinMax.call(this, set, "bNumS2");
-   var vmin = vu1[0];
-   var vmax = vu1[1];
-   this._dbControl.find("#Is2Range").html("" + vmin + "-" + vmax);
+DbFilter.prototype._analyzeIs2 = function(set, active) {
+   if (!active) {
+      var vu1 = DbFilter.prototype._getMinMax.call(this, set, "bNumS2");
+      var vmin = vu1[0];
+      var vmax = vu1[1];
+      this._dbControl.find("#Is2Min").val(vmin);
+      this._dbControl.find("#Is2Max").val(vmax);
+   }
 }
-DbFilter.prototype.analyze = function(set) {
-   DbFilter.prototype._analyzeSim.call(this, set);
-   DbFilter.prototype._analyzeIca.call(this, set);
-   DbFilter.prototype._analyzeIrmsd.call(this, set);
-   DbFilter.prototype._analyzeIs2.call(this, set);
-}
-DbFilter.prototype.apply = function(set) {
-   var fset = set;
+DbFilter.prototype.apply = function() {
+   var fset = this._setOrg;
 
    fset = DbFilter.prototype._filterPaired.call(this, fset);
    fset = DbFilter.prototype._filterCof.call(this, fset);
@@ -374,7 +403,7 @@ DbFilter.prototype.apply = function(set) {
    fset = DbFilter.prototype._filterIca.call(this, fset, both);
    fset = DbFilter.prototype._filterIrmsd.call(this, fset, both);
    fset = DbFilter.prototype._filterIs2.call(this, fset, both);
-   this._dbControl.find("#Stats").html(countDirectSubelements(fset) + "/" + countDirectSubelements(set));
+   //this._dbControl.find("#Stats").html(countDirectSubelements(fset) + "/" + countDirectSubelements(this._setOrg));
    
    var keys = [];
    for (k in fset) {
@@ -387,7 +416,27 @@ DbFilter.prototype.apply = function(set) {
    }
    return rset;
 }
-
+DbFilter.prototype.update = function() {
+   var enabledIca = this._dbControl.find("#IncludeIca").prop('checked');
+   this._dbControl.find("#IcaMin").prop("disabled", !enabledIca);
+   this._dbControl.find("#IcaMax").prop("disabled", !enabledIca);
+   var enabledIs2 = this._dbControl.find("#IncludeIs2").prop('checked');
+   this._dbControl.find("#Is2Min").prop("disabled", !enabledIs2);
+   this._dbControl.find("#Is2Max").prop("disabled", !enabledIs2);
+   var enabledSim = this._dbControl.find("#IncludeSim").prop('checked');
+   this._dbControl.find("#SimMin").prop("disabled", !enabledSim);
+   this._dbControl.find("#SimMax").prop("disabled", !enabledSim);
+   var enabledIrmsd = this._dbControl.find("#IncludeIrmsd").prop('checked');
+   this._dbControl.find("#IrmsdMin").prop("disabled", !enabledIrmsd);
+   this._dbControl.find("#IrmsdMax").prop("disabled", !enabledIrmsd);         
+   /* create temporary subset by applying current filter */
+   var set = DbFilter.prototype.apply.call(this);
+   /* apply analysis on subset */
+   DbFilter.prototype._analyzeIca.call(this,   set, enabledIca);
+   DbFilter.prototype._analyzeIs2.call(this,   set, enabledIs2);
+   DbFilter.prototype._analyzeSim.call(this,   set, enabledSim);
+   DbFilter.prototype._analyzeIrmsd.call(this, set, enabledIrmsd);
+}
 
 //------------------------------------------------------------------------------
 
@@ -417,15 +466,16 @@ DbSet.prototype.updateSet = function(setName, dbFilter) {
    'success': function (data) {
       console.log(data);
       _this._dataOrg = data;
+      dbFilter.init(_this._dataOrg);
       DbSet.prototype.update.call(_this, setName, dbFilter);
-      dbFilter.analyze(_this._dataOrg);
    }
   });
 }
 DbSet.prototype.update = function (setName, dbFilter) {
    var _this = this;
    // apply filter
-   var data = dbFilter.apply(this._dataOrg);
+   var data = dbFilter.apply();
+   $('#dbControl').find("#Stats").html(countDirectSubelements(data) + "/" + countDirectSubelements(dbFilter._setOrg));
    this._dbSetIds = [];
    $.each(data, function(rowkey, row) {
       _this._dbSetIds.push(rowkey);
@@ -1143,6 +1193,18 @@ $('#dbControl #ShowFilter').on('click', function(e){
    console.log(">dbControl click ShowFilter:");
    ga('send', 'event', 'button', 'click', 'ShowFilter');
    dbFilter.show();
+});
+$('#Filter input').on('change', function(e){
+   console.log(">dbControl change input:");
+   dbFilter.update();
+});
+$('#Filter select').on('change', function(e){
+   console.log(">dbControl change select:");
+   dbFilter.update();
+});
+$('#Filter #Keyword').on('input', function(e){
+   console.log(">dbControl input Keyword:");
+   dbFilter.update();
 });
 $('#dbControl #HideFilter').on('click', function(e){
    console.log(">dbControl click HideFilter:");

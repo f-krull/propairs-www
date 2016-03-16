@@ -70,7 +70,7 @@ body.loading #Modal {
 #dbControl table tr {
    height: 30px;
 }
-#dbControl .range input {
+#dbControl .range input:not([type='checkbox']) {
    width: 45px;
    text-align: right;
 }
