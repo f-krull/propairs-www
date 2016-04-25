@@ -155,12 +155,14 @@ DbSetSelector.prototype._newData = function(sets) {
 //------------------------------------------------------------------------------
 
 function DbFilter() {
+   this._dbFilterTmpl = $('#FilterTemplate').html().trim();
    this._dbControl   =  $('#dbControl');
    this._dbFilter    =  $('#dbControl #Filter');
    this._dbFilterBtn =  $('#dbControl #ShowFilter');
    this._dbFilter.hide();
    this._dbFilter.prop("disabled", false);
    this._setOrg = {};
+   this._dbFilter.html(this._dbFilterTmpl);
 }
 DbFilter.prototype.init = function(setOrg) {
    this._setOrg = setOrg;
