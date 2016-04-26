@@ -43,6 +43,10 @@ button {
 
 .text {
    line-height: 150%;
+   -webkit-hyphens: auto;
+   -moz-hyphens: auto;
+   -ms-hyphens: auto;
+   hyphens: auto;
 }
 
 .fclear {
