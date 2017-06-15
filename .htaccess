@@ -1,0 +1,22 @@
+Options Indexes FollowSymLinks MultiViews
+order allow,deny
+allow from all
+<Files ~ "\.(txt|gz|html)$">
+   allow from all
+</Files>
+
+AddHandler text/plain .pdb
+AddHandler text/plain .txt
+AddHandler application/json .json
+AddHandler text/javascript  .js
+AddHandler text/html  .html
+AddHandler text/css   .css
+AddHandler image/jpeg .jpg
+
+
+<ifModule mod_deflate.c>
+<Files ~ "\.(txt|json|js|css|html|pdb)$">
+SetOutputFilter DEFLATE
+</Files>
+</ifModule>
+
