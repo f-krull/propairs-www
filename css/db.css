@@ -41,7 +41,7 @@ body.loading #Modal {
 
 #dbControl {
    border-bottom: 2px solid gray;
-   border-radius: 10px;
+   /*border-radius: 10px;*/
    padding: 10px;
 }
 #dbControl #Global {
@@ -106,9 +106,10 @@ body.loading #Modal {
    border-bottom: 2px solid gray;
    border-radius: 10px;
    padding: 10px;
-   margin-top: 20px;
+   margin-top: 2px;
    position: relative;
    overflow: hidden;
+   background-color: white;
 }
 #dbDetailNav {
    border: 2px solid #DDD;
@@ -358,8 +359,6 @@ body.loading #Modal {
    margin-top: 20px;
 }
 #dbSetTableSc {
-   max-height: 600px;
-   overflow: auto;
    margin: 10px;
 }
 #dbSetTable table {
