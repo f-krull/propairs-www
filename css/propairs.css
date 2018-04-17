@@ -161,3 +161,10 @@ nav ul a:hover {
    margin-top: 0;
    padding: 0.8em 0.4em 0.2em 0.0em;
 }
+
+/* date column in index.html update section */ 
+#updates td:nth-child(1) {
+    text-align:     right;
+    vertical-align: top;
+    padding-right: 5px;
+}
