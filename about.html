@@ -66,7 +66,7 @@
     </p>
     <blockquote class="it">"Is the structure 1zvh a protein docking complex with the interface between the chain A and L 
     and is chain A of 1ghl a suitable unbound structure for chain <b>A</b> of 1zvh?" </blockquote>
-    The answer is "no".
+    The answer is "no". But if we ask:
     <blockquote class="it">"Is the structure 1zvh a protein docking complex with the interface between the chain L and A 
     and is chain A of 1ghl a suitable unbound structure for chain <b>L</b> of 1zvh?" </blockquote>
     <p>
@@ -167,7 +167,7 @@
     consisting two structures and three chains. pdbB is a PDB structure with two or more
     chains and has an assumed interface between the chains cB1 and cB2. pdbU is a PDB
     structure that contains the chain cU1, which is the assumed unbound state of cB1.
-    We could search the entire Protein Data Bank for any protein interactions with by
+    We search the entire Protein Data Bank for any protein interactions with by
     constructing all possible seeds with all combinations of proteins and chains and apply
     the unbound assignment algorithm. However, the unbound assignment algorithm itself
     has exponential time complexity and due to the high number of possible seeds, this
@@ -187,18 +187,18 @@
     <p>Additionally, to reduce the number of seeds resulting in identical assignments, we require:
     </p>
        <ol start="3">
-       <li>cB1 and cB2 need to be connected.</li>
+       <li>cB1 and cB2 need to be in direct contact.</li>
        </ol>
     
     <p>To be able to produce seeds that are able to meet these requirements, we compute
     sequence identities between all chains within the PDB. We also compute
     chain connectivity for every PDB structure. Using this
-    precomputed data along with relational algebra, we can efficiently locate every PDB
+    precomputed data along with relational algebra, we can efficiently identify every PDB
     structure with two interfacing chains, of which at least one of the chains can be found
     without the others in any existing structure. By restricting the seeds to only those that
     fulfill the three basic requirements, we can lower the number of possibilities from 2.6e11
-    to 1e6 (Nov 2013) without the loss of any legitimate docking complex. About every second of there seeds
-    results in a legitimate interface partition. 
+    to 1e6 (Nov 2013) without omitting legitimate docking complexes. In about 50% a given
+    seed can identify a legitimate interface.
     </p>
     
     <h2>From the Large to the Small ProPairs Data Set
