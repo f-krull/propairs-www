@@ -60,7 +60,6 @@ function DbConfig() {
    this.dataSetPrefix = 'data';
    this.dataSetPath   = './data/';
    this.dataSetListPath = './data/sets.txt';
-   this.dataSetFile   = 'merged.json';
    this.dataPdbPath   = './pdb/';
 };
 
@@ -69,8 +68,8 @@ function DbConfig() {
 
 function DbSetLink() {
    this._tmpl = $('#dbSetTableLinkTemplate').html().trim();
-   this._urlPdb = 'http://www.rcsb.org/pdb/explore/explore.do?structureId=';
-   this._urlHet = 'http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId=';
+   this._urlPdb = 'http://www.rcsb.org/structure/';
+   this._urlHet = 'http://www.rcsb.org/ligand/';
 }
 DbSetLink.prototype.getPdb = function(pdbName) {
    var tmpData = '-';
@@ -463,7 +462,7 @@ DbSet.prototype.updateSet = function(setName, dbFilter) {
    $.ajax({
    'async': false,
    'global': false,
-   'url': c.dataSetPath + "/" + setName + '/' + c.dataSetFile,
+   'url': c.dataSetPath + "/" + setName + '/' + `propairs_set_${setName}_paired_representative.json`,
    'dataType': "json",
    'success': function (data) {
       console.log(data);
@@ -659,7 +658,6 @@ function DbDetail() {
    this._dbNavNext = $('#dbDetailNav #next');
    this._dbNavPrev = $('#dbDetailNav #prev');
    this._dbNavSel = $('#dbDetailNav :checkbox');
-   this._diagClus = $("#diagClus");
    this._dbClustTmpl = $('#dbDetailDataClusTemplate').html().trim();;
    this._imgCtrl = new DbDetailImgCtrl();
    this._currClus = '';
@@ -715,17 +713,12 @@ DbDetail.prototype._updateAln = function(aln) {
    return tData;
 }
 DbDetail.prototype._updateClus = function(c) {
-   numSimilar = c.split("\n").length -1 -1 -1; // end, header and id
-   if (numSimilar <= 0) {
-      return "";
-   } 
-   this._currClus = c.replace('\n', '<br>');
+   this._currClus = c;
    var tmp = this._dbClustTmpl;
-   return tmp.replace(/{{numsim}}/g, numSimilar.toString() + " similar Interface" + (numSimilar > 1 ? "s" : ""));
+   return tmp.replace(/{{cluster}}/g,`${c}`);
 }
 DbDetail.prototype.showClus = function() {
-   this._diagClus.html("<p>" + this._currClus + "</p>");
-   this._diagClus.dialog({modal: true, width: 700});
+   document.getElementById("buttonClus")
 }
 DbDetail.prototype._getCofRow = function(cr1, crn, bcofa, ucofa) {
    var tData = '';
@@ -770,7 +763,7 @@ DbDetail.prototype.update = function(dbSet, conf, setName) {
    $.ajax({
       'async': false,
       'global': false,
-      'url': conf.dataSetPath + "/" + setName + "/info/" + this._currIdx + "/" + this._currIdx + ".json",
+      'url': conf.dataSetPath + "/" + setName + "/info/" + this._currIdx + "/complex.json",
       'dataType': "json",
       'success': function (data) {
           json = data;
@@ -793,7 +786,7 @@ DbDetail.prototype.update = function(dbSet, conf, setName) {
 
       .replace(/{{bname}}/g,   DbDetail.prototype._getDetailPdb.call(this, json['bp']))
       .replace(/{{btype}}/g,   json['btype'].toLowerCase())
-      .replace(/{{bclus}}/g,   DbDetail.prototype._updateClus.call(this, json['cluster']))
+      .replace(/{{cluster}}/g, json['cluster'])
 
       .replace(/{{u2name}}/g,  DbDetail.prototype._getDetailPdb.call(this, json['u2p']))
       .replace(/{{u2type}}/g,  json['u2type'].toLowerCase())
@@ -832,12 +825,11 @@ DbDetail.prototype.update = function(dbSet, conf, setName) {
 
    // show new images
    var tData = '';
-   imgUrl = "./{{setPath}}/{{setCurr}}/info/{{bIndex}}/img_p{{cplx}}";
+   imgUrl = "./{{setPath}}/{{setCurr}}/info/{{bIndex}}/img/img_p{{cplx}}";
    imgUrl = imgUrl.replace(/{{setCurr}}/g, setName)
                   .replace(/{{setPath}}/g, conf.dataSetPath)
                   .replace(/{{bIndex}}/g,  this._currIdx)
-                  .replace(/{{cplx}}/g,  this._imgCtrl.get())
-                  ;
+                  .replace(/{{cplx}}/g,  this._imgCtrl.get());
    tData = this._dbDetailViewTmpl
       .replace(/{{imgUrl}}/g, imgUrl)
       ;
@@ -859,13 +851,13 @@ DbDetail.prototype.update = function(dbSet, conf, setName) {
    DbDetail.prototype.precacheCurr.call(this, this._currIdx, conf, setName);
 }
 DbDetail.prototype.updateView = function(conf, setName) {
-   imgUrl = "./{{setPath}}/{{setCurr}}/info/{{bIndex}}/img_p{{cplx}}";
+   imgUrl = "./{{setPath}}/{{setCurr}}/info/{{bIndex}}/img/img_p{{cplx}}";
    imgUrl = imgUrl.replace(/{{setCurr}}/g, setName)
                   .replace(/{{setPath}}/g, conf.dataSetPath)
                   .replace(/{{bIndex}}/g,  this._currIdx)
                   .replace(/{{cplx}}/g,  this._imgCtrl.get())
                   ;
-   this._dbDetailView.find("#reelimg").reel("images", imgUrl + "_##.jpg");
+   document.getElementById("detail-img").src = imgUrl + "_01.webp";
    this._imgCtrl.update();
 }
 
@@ -874,29 +866,29 @@ DbDetail.prototype.getCurrIdx = function() {
 }
 DbDetail.prototype.precache = function(bIndex, conf, setName) {
     var imgs = new Array();
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p" + this._imgCtrl.get() + '_01.jpg');
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p" + this._imgCtrl.get() + '_01.webp');
     $(imgs).each(function(){
         $('<img/>')[0].src = this;
     });
 }
 DbDetail.prototype.precacheCurr = function(bIndex, conf, setName) {
     var imgs = new Array();
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p0000_01.jpg");
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p0001_01.jpg");
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p0010_01.jpg");
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p0011_01.jpg");        
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p0100_01.jpg");
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p0101_01.jpg");
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p0110_01.jpg");                    
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p0111_01.jpg");                    
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p1000_01.jpg");                    
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p1001_01.jpg");                    
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p1010_01.jpg");                    
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p1011_01.jpg");                                        
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p1100_01.jpg");                                        
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p1101_01.jpg");                                        
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p1110_01.jpg");                                        
-    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img_' + "p1111_01.jpg");                                             
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p0000_01.webp");
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p0001_01.webp");
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p0010_01.webp");
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p0011_01.webp");        
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p0100_01.webp");
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p0101_01.webp");
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p0110_01.webp");                    
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p0111_01.webp");                    
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p1000_01.webp");                    
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p1001_01.webp");                    
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p1010_01.webp");                    
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p1011_01.webp");                                        
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p1100_01.webp");                                        
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p1101_01.webp");                                        
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p1110_01.webp");                                        
+    imgs.push(conf.dataSetPath + "/" + setName + "/info/" + bIndex +'/img/img_' + "p1111_01.webp");                                             
     $(imgs).each(function(){
         $('<img/>')[0].src = this;
     });
@@ -1116,11 +1108,6 @@ $('#dbDetailData').on('click', '.aln button', function(e){
    console.log(">alnclick: " + id);
    ga('send', 'event', 'button', 'click', 'Alignment');
    dbDetail.toggleAln(id);
-});
-$('#dbDetailData').on('click', '#clus', function(e){
-   ga('send', 'event', 'button', 'click', 'Cluster');
-   console.log(">clus: ");
-   dbDetail.showClus();
 });
 
 // detail navigation

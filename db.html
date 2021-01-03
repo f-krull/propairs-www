@@ -98,17 +98,7 @@
 
 <script id="dbDetailViewTemplate" type="text/x-jquery-tmpl">
 <div>
-   <img title="click and drag left or right to rotate view" id="reelimg" src="{{imgUrl}}_01.jpg"
-      class="reel"
-      width="400px"
-      height="300px"
-      data-frames="30"
-      data-preloader=0
-      data-cursor="col-resize"
-      data-indicator=2
-      data-images="{{imgUrl}}_##.jpg"
-      data-revolution=300
-   >
+   <img id="detail-img" src="{{imgUrl}}_01.webp" width="400px" height="300px">
 </div>
 <div><table><tbody>
    <tr>
@@ -149,9 +139,8 @@
 <tr class="x1 last spaceb"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 <tr class="bc spaceh"><td></td><td>{{bname}}</td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr class="bc"       ><td></td><td>{{btype}}</td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr class="bc spaceb"><td></td><td title="show interface cluster">{{bclus}}</td><td></td><td></td><td></td><td></td><td></td></tr>
-
+<tr class="bc spaceb"       ><td></td><td>{{btype}}</td><td></td><td></td><td></td><td></td><td></td></tr>
+<!-- <tr class="bc spaceb"><td></td><td title="show interface cluster"><button id="clus" value="{{cluster}}"">Show sim. interfaces</button></td><td></td><td></td><td></td><td></td><td></td></tr> -->
 <tr class="x2"><td></td><th>Bound 2</th><td></td><td></td><td></td><th>Unbound 2</th><td></td></tr>
 <tr class="x2"><td></td><td></td><td></td><td></td><td></td><td>{{u2name}}</td><td></td></tr>
 <tr class="x2 spaceb"><td></td><td></td><td></td><td></td><td></td><td>{{u2type}}</td><td></td></tr>
@@ -180,28 +169,28 @@ Chain {{chainb}}&rarr;{{chainu}}<br>
 
 
 <script id="dbDetailDataAlnPdbTemplate" type="text/x-jquery-tmpl">
-<span class="pdb" title="PDB link"><a target="_blank" href="http://www.rcsb.org/pdb/explore/explore.do?structureId={{pdb}}" target="_blank">{{pdb}}</a></span>, {{biounit}}
+<span class="pdb" title="PDB link"><a target="_blank" href="http://www.rcsb.org/structure/{{pdb}}" target="_blank">{{pdb}}</a></span>, {{biounit}}
 </script>
 
 <!-------------------->
 
 <script id="dbDetailDataClusTemplate" type="text/x-jquery-tmpl">
-<button id="clus">{{numsim}}</button>
+   <button id="clus" value="{{cluster}}"">Show sim. interfaces</button>
 </script>
 
 <!-------------------->
 
 <script id="dbDetailDataAlnCof1Template" type="text/x-jquery-tmpl">
-<tr class="x1"><td></td><td><span class="emph">Cofactors:</span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{bcof}}">{{bcof}}<a> {{bloc}}</td><td></td><td>{{arrow}}</td><td></td><td><span class="emph">Cofactors:</span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{ucof}}">{{ucof}}<a> {{uloc}}</td><td></td></tr>
+<tr class="x1"><td></td><td><span class="emph">Cofactors:</span><a target="_blank" href="http://www.rcsb.org/ligand/{{bcof}}">{{bcof}}<a> {{bloc}}</td><td></td><td>{{arrow}}</td><td></td><td><span class="emph">Cofactors:</span><a target="_blank" href="http://www.rcsb.org/ligand/{{ucof}}">{{ucof}}<a> {{uloc}}</td><td></td></tr>
 </script>
 <script id="dbDetailDataAlnCof1nTemplate" type="text/x-jquery-tmpl">
-<tr class="x1"><td></td><td><span class="emph"></span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{bcof}}">{{bcof}}<a> {{bloc}}</td><td></td><td>{{arrow}}</td><td></td><td><span class="emph"></span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{ucof}}">{{ucof}}<a> {{uloc}}</td><td></td></tr>
+<tr class="x1"><td></td><td><span class="emph"></span><a target="_blank" href="http://www.rcsb.org/ligand/{{bcof}}">{{bcof}}<a> {{bloc}}</td><td></td><td>{{arrow}}</td><td></td><td><span class="emph"></span><a target="_blank" href="http://www.rcsb.org/ligand/{{ucof}}">{{ucof}}<a> {{uloc}}</td><td></td></tr>
 </script>
 <script id="dbDetailDataAlnCof2Template" type="text/x-jquery-tmpl">
-<tr class="x2"><td></td><td><span class="emph">Cofactors:</span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{bcof}}">{{bcof}}<a> {{bloc}}</td><td></td><td>{{arrow}}</td><td></td><td><span class="emph">Cofactors:</span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{ucof}}">{{ucof}}<a> {{uloc}}</td><td></td></tr>
+<tr class="x2"><td></td><td><span class="emph">Cofactors:</span><a target="_blank" href="http://www.rcsb.org/ligand/{{bcof}}">{{bcof}}<a> {{bloc}}</td><td></td><td>{{arrow}}</td><td></td><td><span class="emph">Cofactors:</span><a target="_blank" href="http://www.rcsb.org/ligand/{{ucof}}">{{ucof}}<a> {{uloc}}</td><td></td></tr>
 </script>
 <script id="dbDetailDataAlnCof2nTemplate" type="text/x-jquery-tmpl">
-<tr class="x2"><td></td><td><span class="emph"></span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{bcof}}">{{bcof}}<a> {{bloc}}</td><td></td><td>{{arrow}}</td><td></td><td><span class="emph"></span><a target="_blank" href="http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId={{ucof}}">{{ucof}}<a> {{uloc}}</td><td></td></tr>
+<tr class="x2"><td></td><td><span class="emph"></span><a target="_blank" href="http://www.rcsb.org/ligand/{{bcof}}">{{bcof}}<a> {{bloc}}</td><td></td><td>{{arrow}}</td><td></td><td><span class="emph"></span><a target="_blank" href="http://www.rcsb.org/ligand/{{ucof}}">{{ucof}}<a> {{uloc}}</td><td></td></tr>
 </script>
 
 
@@ -244,7 +233,7 @@ Chain {{chainb}}&rarr;{{chainu}}<br>
 <script id="dbSetTableBodyTemplate" type="text/x-jquery-tmpl">
 <tr data-id={{bIndex}}>
 <td title="select for download"><input type="checkbox" value="yes"></input></td>
-<td title="preview"><img src="./{{setPath}}/{{setCurr}}/preview/{{bIndex}}.jpg"></td>
+<td title="preview"><img src="./{{setPath}}/{{setCurr}}/info/{{bIndex}}/preview.png"></td>
 <td title="PDB ID and interfacing chains of bound structure">{{bName}}</td>
 <td title="type of bound structure">{{bType}}</td>
 <td title="number of C&alpha;-atoms in interface region of bound structure">{{bNumCa}}</td>

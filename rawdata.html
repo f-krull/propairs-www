@@ -8,6 +8,7 @@
    <script type="text/javascript" src="js/jquery.min.js"></script>
    <script type="text/javascript" src="js/ga.js"></script>
    <script type="text/javascript" src="js/headerscroll.js"></script>
+   <script type="text/javascript" src="js/pp_helper.js"></script>
    <title>ProPairs</title>
 </head>
 
@@ -23,7 +24,7 @@
    <ul>
         <li><a href="index.html">Home</a></li>
         <li><a href="database.html">Database</a></li>
-        <li><span>Raw data</span></li>
+        <li><span>Downloads</span></li>
         <li><a href="sourcecode.html">Source code</a></li>
         <li><a href="about.html">About</a></li>
    </ul>
@@ -33,55 +34,24 @@
    
 
     <div id="body" class="padding maxwidth">
-    
-      <h1>
-      Coordinate Files
-      </h1>      
-      <p>
-      Each ZIP archive listed below represents a nonredundant ProPairs data set. The archives contain PDB coordinate files 
-      of the binding partners in bound (suffixes "b1.pdb" and "b2.pdb") and unbound state (suffixes "u1.pdb" and "u2.pdb"). In case only one 
-      unbound structure is available the archive contains an empty file with the suffix "u2.pdb_not_available".
+      <h1>Coordinate files (*.pdb)</h1>
+      <p> 
+        Each tar.gz archive listed below represents a representative, nonredundant ProPairs data set. The archives contain PDB coordinate files 
+        of the binding partners in bound state (suffixes "b1.pdb" and "b2.pdb") and in unbound state (suffixes "u1.pdb" and "u2.pdb"). In case only one 
+        unbound structure was identified by ProPairs, the archive contains an empty file with the additional suffix ".not_available".
       </p>
-      
-      <h2>Data Set: Jan/2018</h2>
-      <ul>
-      <li><b><a href="data/data2018-01-01/raw/ProPairsSet_20180101.zip">small ProPairs set</a></b> (3,268 interfaces)<br>
-      redundancy removed; contains only representative complexes and unbound structures</li>
-      </ul>
-    
-      <h2>Data Set: Nov/2013</h2>
-      <ul>
-      <li><b><a href="data/raw/ProPairsSet_131101.zip">small ProPairs set</a></b> (2,070 interfaces)<br>
-      redundancy removed; contains only representative complexes and unbound structures</li>
-      </ul>
-    
-      <h1>
-      Flat-File Tables
-      </h1>
-      <p>Each file listed below represents a ProPairs data set. The files are human-readable flat-file tables with
-      each row containing information about one detected interface and one corresponding unbound structure.
-      <br><a href="https://github.com/propairs/propairs/blob/9a6dbb69e1091b6f03335b7a88c9aa20bd57c825/config/columns_def.sh">Here</a> 
-      you can find a description of the table columns.
-      </p>
-    
-    
-      <h2>Data Set: Jan/2018</h2>
-      <ul>
-      <li><b><a href="data/data2018-01-01/raw/20180101.zip">large ProPairs set</a></b> (18,984 interfaces)<br>
-      no redundancy removed - but contains clustering information</li>
-      <li><b><a href="data/data2018-01-01/raw/20180101_nonredundant.zip">small ProPairs set</a></b> (3,268 interfaces)<br>
-      redundancy removed; contains only representative complexes and unbound structures</li>
-      </ul>
-    
-      <h2>Data Set: Nov/2013</h2>
-      <ul>
-      <li><b><a href="data/raw/data131101_large.zip">large ProPairs set</a></b> (11,600 interfaces)<br>
-      no redundancy removed - but contains clustering information</li>
-      <li><b><a href="data/raw/data131101_small.zip">small ProPairs set</a></b> (2,070 interfaces)<br>
-      redundancy removed; contains only representative complexes and unbound structures</li>
-      </ul>
-      
+      <div id="coord-files">Loading...</div>
 
+      <h1>Flat-file tables</h1>      
+      <p> 
+        Each file listed below represents a ProPairs data set. The files are human-readable flat-file tables with
+        each row containing information about one detected interface and one corresponding unbound structure.
+      </p>
+      </p>
+        <a href="https://github.com/propairs/propairs/blob/9a6dbb69e1091b6f03335b7a88c9aa20bd57c825/config/columns_def.sh">Here</a> 
+        you can find a description of the tables' columns.
+      </p>
+      <div id="plain-files">Loading...</div>
     </div>
     
    
@@ -91,6 +61,73 @@
   <footer>
      <p>© 2018 by F. Krull, Freie Universität Berlin, Macromolecular Modelling Group, Prof. E. W. Knapp</p>
   </footer>
+  <script>
+    (async function() {
+      // get set ids
+      const set_ids  = await pp.getSetIds();
+      // get set descriptions
+      const set_descrs = await Promise.all(set_ids.map(async e => {
+        return await pp.getSetDescription(e);
+      }));
+      // sort by date
+      set_descrs.sort( (a,b) => a.date_created < b.date_created );
+      // generate list items
+      function _createHeader(ep, dscr) {
+        let eh = document.createElement("h2");
+        ep.appendChild(eh);
+        eh.innerHTML = dscr.id;
+        //eh.innerHTML = `Snapshot ${dscr.date_created.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}`
+        let ed = document.createElement("div");
+        ep.appendChild(ed);
+        ed.innerHTML = `(${dscr.descr})`
+      }
+      function _createDlItem(edl, name, url, text) {
+        let edt = document.createElement("dt");
+        edl.appendChild(edt);
+        let ea = document.createElement("a");
+        ea.innerHTML = name;
+        ea.href = url;
+        edt.appendChild(ea);
+        let edd = document.createElement("dd");
+        edd.innerHTML = text;
+        edl.appendChild(edd);
+      }
+
+      {
+        let ep = document.getElementById("coord-files");
+        ep.innerHTML = '';
+        set_descrs.forEach(e => {
+          _createHeader(ep, e);
+          let edl = document.createElement("dl");
+          ep.appendChild(edl);
+          _createDlItem(edl,
+            "representative ProPairs set",
+            `data/${e.id}/propairs_set_${e.id}_paired_representative.tar.gz`,
+            `${e.num_representative_interfaces} interfaces (similar interfaces have been removed; only representative complexes and unbound structures are contained)`,
+          );
+        });
+      }
+      {
+        let ep = document.getElementById("plain-files");
+        ep.innerHTML = '';
+        set_descrs.forEach(e => {
+          _createHeader(ep, e);
+          let edl = document.createElement("dl");
+          ep.appendChild(edl);
+          _createDlItem(edl,
+            "comprehensive ProPairs set",
+            `data/${e.id}/propairs_set_${e.id}_unpaired_comprehensive.txt.gz`,
+            `${e.num_interfaces} interfaces (no redundancy was removed, but contains information for similarities and clusters )`,
+          );
+          _createDlItem(edl,
+            "representative ProPairs set",
+            `data/${e.id}/propairs_set_${e.id}_paired_representative.txt.gz`,
+            `${e.num_representative_interfaces} interfaces (similar interfaces have been removed; only representative complexes and unbound structures are contained)`,
+          );
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
 
