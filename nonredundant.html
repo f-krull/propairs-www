@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="shortcut icon" href="css/propairs_logo_fav.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script type="text/javascript" src="js/tabulator.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+<link rel="stylesheet" href="css/tabulator.min.css" type="text/css"/>
+<script type="text/javascript" src="js/pp_helper.js"></script>
+<script type="text/javascript" src="js/pp_layout.js"></script>
+<style>
+  #table {
+    background-color:#fff;
+    /* border: 1px solid #333; */
+    border-radius: 10px;
+  }
+  #table .tabulator-header {
+    /* background-color:#333; */
+    /* color:#fff; */
+    /* font-style: italic; */
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    font-size: 12px;
+  }
+
+  :root {
+    --color-u1: #c9d4fd;
+    --color-u2: #BBFFBB;
+    --color-u1d: #bdc8f3;
+    --color-u2d: rgb(172, 240, 172);
+    --color-u1dd: #a6b0d8;
+    --color-u2dd: rgb(146, 206, 146);
+  }
+  .tabulator .tabulator-header .tabulator-col {
+    border-right: 0px;
+  }
+  /* .tabulator-row {} */
+  .tabulator-row .tabulator-cell {
+    border-right: 0px;
+    font-weight: bold;
+    color: #444;
+    font-size: 12px;
+  }
+  .tabulator-row:hover {
+    font-weight: bold;
+  }
+  .tabulator-row-odd .pp-u1 {
+    background-color: var(--color-u1);
+  }
+  .tabulator-row-odd .pp-u2 {
+    background-color: var(--color-u2);
+  }
+  .tabulator-row-even .pp-u1 {
+    background-color: var(--color-u1d);
+  }
+  .tabulator-row-even .pp-u2 {
+    background-color: var(--color-u2d);
+  }
+  .tabulator-row-odd:hover .pp-u1 {
+    background-color: var(--color-u1dd);
+  }
+  .tabulator-row-odd:hover .pp-u2 {
+    background-color: var(--color-u2dd);
+  }
+  .tabulator-row-even:hover .pp-u1 {
+    background-color: var(--color-u1dd);
+  }
+  .tabulator-row-even:hover .pp-u2 {
+    background-color: var(--color-u2dd);
+  }
+  .tabulator-row .pp-open {
+    padding: 0px;
+  }
+  .tabulator-row:hover .pp-open span img {
+    border: 3px solid rgb(180, 180, 180) !important;
+  }
+
+
+
+</style>
+</head>
+<body>
+  <script>pplayout.init();</script>
+  <header id="pp-nav" class="mb-auto"></header><script>pplayout.nav();</script>
+  <div class="container">
+    <h2 class="py-lg-3">Non-redundant ProPairs data set</h2>
+    <div class="row">
+      <div class="col">
+        <p>
+          TODO:
+          <ul>
+            <li>table download</li>
+            <li>detail alingment</li>
+            <li>more details</li>
+            <li>text</li>
+            <li>table formattting?</li>
+          </ul>
+        </p> 
+        <p>
+          For better performance, please consider <a href="dl_pff.html">downloading the data set</a> or viewing 
+          the smaller, <a href="#">non-redundant data set</a>. Both options feature the data in more detail.
+        </p>
+      </div>
+      <div class="col-md-3 form-group">
+        <label for="sel-set-id" class="form-label">Data set version:</label>
+        <select id="sel-set-id" class="form-control" name="set-id" disabled></select>
+      </div>
+    </div>
+    <div id="table" class="mt-4"></div>
+  </div>
+  <footer id="pp-footer"></footer><script>pplayout.footer();</script>
+  <script>
+
+    async function updateSelSetIds() {
+      const url_params = new URLSearchParams(window.location.search);
+      const curr_set = url_params.get("set");
+      var es = document.getElementById("sel-set-id");
+      (await pp.getSetIds()).forEach(e => {
+        var eo = document.createElement("option");
+        eo.value = e;
+        eo.innerHTML = e;
+        eo.selected = e == curr_set;
+        es.appendChild(eo)
+      });
+      es.disabled = false;
+      es.onchange = function() {
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("set", getSelSetId());
+        window.location.search = searchParams.toString();
+      };
+    }
+
+    function getSelSetId() {
+      return document.getElementById("sel-set-id").value;
+    }
+
+    function progressInit(parentId) {
+      var ep = document.getElementById(parentId);
+      let es = document.createElement("div");
+      // es.innerHTML = "Loading data...";
+      ep.appendChild(es);
+      es.id = "pp-progress-text";
+      es.classList.add("progress");
+      let e = document.createElement("div");
+      es.appendChild(e);
+      e.id = "pp-progress";
+      e.classList.add("progress-bar");
+      e.style.width = "0%";
+    }
+    function progressSet(p) {
+      // document.getElementById("pp-progress-text").innerHTML = `Loading... ${(p*100).toFixed(2)}%`;
+      var e = document.getElementById("pp-progress");
+      e.style.width = `${p*100}%`;
+      e.innerHTML = `${(p*100).toFixed(2)}%`;
+    }
+
+    function _getSimFmt(cell) {
+      const val = Math.round(parseFloat(cell.getValue()) * 100);
+      return val ? `${val}%` : "-";
+    }
+
+    function _getPdbFmt(c,_,__){
+      return `${c.getValue().slice(0, 4)}${c.getValue().slice(5)}`;
+    }
+
+
+    (async function(){
+      pp.progressInit("table", null);
+
+      await updateSelSetIds();
+      const set_descr = await pp.getSetDescription(getSelSetId());
+
+      // document.getElementById("num-enries").innerHTML = ` (${set_descr.num_alignments})`;
+      // const urlParams = new URLSearchParams(window.location.search);
+
+      const rows_jsn = await (async function(){
+        const data_url = `./data/${getSelSetId()}/propairs_set_${getSelSetId()}_paired_representative.json`;
+        const r = await fetch(data_url, {
+          method: "GET"
+        });
+      
+        return Object.entries(await r.json()).map(([k,v]) => {
+          v.id = k;
+          return v;
+        });
+      })();
+      
+
+      const wdMaxCof = 140;
+      const wdMaxPDb = 120;
+      const wdMaxNum = 80;
+
+      var table = new Tabulator("#table", {
+        height: "811px",
+        layout: "fitColumns",
+        data: rows_jsn,
+        pagination: "local",
+        tooltips: true,
+        tooltipsHeader: true,
+        rowClick:function(e, row){
+          window.open(`./nr_detail.html?set=${set_descr.id}&id=${row.getData().id}`, '_blank');
+        },
+        columns: [
+          { field:"id",     title:"",                  width: 70, formatter: (cell,_,onR) => {
+            onR(() => cell.getElement().classList.add("pp-open"));
+            var es = document.createElement("span");
+            {
+              var eimg = document.createElement("img");
+              es.appendChild(eimg);
+              eimg.src = `./data/${set_descr.id}/info/${cell.getData().id}/preview.png`;
+              eimg.width = 26;
+              eimg.height = 26;
+              eimg.style = "background-color: white;"
+              eimg.style = "background-color: white; border: 3px solid white"
+              var ea = document.createElement("a");
+              es.appendChild(ea); 
+              ea.style = "padding: 4px;"
+              ea.innerHTML = "open";
+              ea.href = `#`;
+            }
+            return es;
+
+          }},
+          { field:"bName",  title:"complex PDB",       width: 120, formatter: _getPdbFmt },
+          { field:"bType",  title:"complex type", },
+          { field:"bNumCa", title:"#intf.-Cα",         width: 85, },
+          { field:"bNumS2", title:"S2 bonds",          width: 88, },
+          { field:"bCof",   title:"complex cofactors", maxWidth: wdMaxCof },
+          { field:"u1Name", title:"u1 PDB", width: 80, formatter: (cell, _, onR) => {
+              onR(() => cell.getElement().classList.add("pp-u1"));
+              return _getPdbFmt(cell,_,onR);
+            }
+          },
+          { field:"u1Sim",  title:"u1 sim.", maxWidth: wdMaxNum, formatter: (cell, _, onR) => {
+              onR(() => cell.getElement().classList.add("pp-u1"));
+              return _getSimFmt(cell);
+            }
+          },
+          { field:"u1Cof",  title:"u1 cofactors", width: 120 , formatter: (cell, _, onR) => {
+              onR(() => cell.getElement().classList.add("pp-u1"));
+              return cell.getValue().join(",");
+            }
+          },
+          { field:"u1Rmsd", title:"u1 iRMSD", maxWidth: wdMaxNum, formatter: (cell, _, onR) => {
+              onR(() => cell.getElement().classList.add("pp-u1"));
+              return cell.getValue();
+            }
+          },
+          { field:"u2Name", title:"u2 PDB", width: 80, formatter: (cell, _, onR) => {
+              onR(() => cell.getElement().classList.add("pp-u2"));
+              return _getPdbFmt(cell,_,onR);
+            }
+          },
+          { field:"u2Sim",  title:"u2 sim.", maxWidth: wdMaxNum, formatter: (cell, _, onR) => {
+              onR(() => cell.getElement().classList.add("pp-u2"));
+              return _getSimFmt(cell);
+            }
+          },
+          { field:"u2Cof",  title:"u2 cofactors", width: 120 , formatter: (cell, _, onR) => {
+              onR(() => cell.getElement().classList.add("pp-u2"));
+              return cell.getValue().join(",");
+            }
+          },
+          { field:"u2Rmsd", title:"u2 iRMSD", maxWidth: wdMaxNum, formatter: (cell, _, onR) => {
+              onR(() => cell.getElement().classList.add("pp-u2"));
+              return cell.getValue();
+            }
+          },
+        ]
+      });
+    })();
+  </script>
+</body>
+</html>
+

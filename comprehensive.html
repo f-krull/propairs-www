@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
 <link rel="stylesheet" href="css/tabulator.min.css" type="text/css"/>
 <script type="text/javascript" src="js/pp_helper.js"></script>
+<script type="text/javascript" src="js/pp_layout.js"></script>
 <style>
   #table {
     background-color:#fff;
@@ -23,11 +24,10 @@
 </style>
 </head>
 <body>
-  <header id="pp-nav" class="mb-auto"></header>
-  <script type="text/javascript" src="js/pp_layout.js"></script>
+  <script>pplayout.init();</script>
+  <header id="pp-nav" class="mb-auto"></header><script>pplayout.nav();</script>
   <div class="container">
     <h2 class="py-lg-3">Comprehensive ProPairs data set</h2>
-    
     <!-- <div class="row">
       <div class="col-auto form-group">
         <label for="sel-set-id" class="form-label">Data set version:</label>
@@ -38,11 +38,11 @@
       <div class="col">
         <p>
           In this data set, all interfaces and unbound structures identified by ProPairs are included. 
-          Due to the large number of entries <span id="num-enries"></span>, this view be can be slow.
+          Due to the large number of entries<span id="num-enries"></span>, this view be can be slow.
         </p> 
         <p>
           For better performance, please consider <a href="dl_pff.html">downloading the data set</a> or viewing 
-          the smaller, <a href="#">non-redundant data set</a>. Both options feature the data in more detail.
+          the smaller, <a id="link-nonred" href="./nonredundant.html">non-redundant data set</a>. Both options feature the data in more detail.
         </p>
       </div>
       <div class="col-md-3 form-group">
@@ -52,6 +52,7 @@
     </div>
     <div id="table" class="mt-4"></div>
   </div>
+  <footer id="pp-footer"></footer><script>pplayout.footer();</script>
   <script>
 
     async function updateSelSetIds() {
@@ -77,27 +78,7 @@
       return document.getElementById("sel-set-id").value;
     }
 
-    function progressInit(parentId) {
-      var ep = document.getElementById(parentId);
-      let es = document.createElement("div");
-      // es.innerHTML = "Loading data...";
-      ep.appendChild(es);
-      es.id = "pp-progress-text";
-      es.classList.add("progress");
-      let e = document.createElement("div");
-      es.appendChild(e);
-      e.id = "pp-progress";
-      e.classList.add("progress-bar");
-      e.style.width = "0%";
-    }
-    function progressSet(p) {
-      // document.getElementById("pp-progress-text").innerHTML = `Loading... ${(p*100).toFixed(2)}%`;
-      var e = document.getElementById("pp-progress");
-      e.style.width = `${p*100}%`;
-      e.innerHTML = `${(p*100).toFixed(2)}%`;
-    }
-
-    function formatPdb(cell, _, _) {
+    function formatPdbB(cell, _, _) {
       const row = cell.getData();
       const pdb4 = cell.getValue().substr(0,4);
       const biou = cell.getValue().substr(4,1);
@@ -108,6 +89,19 @@
       ea.href = `https://www.rcsb.org/structure/${pdb4}`;
       ea.target = "_blank";
       es.append(` (${biou}) ${row.CBI1}:${row.CBI2}`);
+      return es;
+    }
+    function formatPdbU(cell, _, _) {
+      const row = cell.getData();
+      const pdb4 = cell.getValue().substr(0,4);
+      const biou = cell.getValue().substr(4,1);
+      let es = document.createElement("span");
+      let ea = document.createElement("a");
+      es.appendChild(ea)
+      ea.innerHTML = `${pdb4}`;
+      ea.href = `https://www.rcsb.org/structure/${pdb4}`;
+      ea.target = "_blank";
+      es.append(` (${biou}) ${row.CU1}`);
       return es;
     }
 
@@ -149,11 +143,12 @@
     
 
     (async function(){
-      progressInit("table");
+      pp.progressInit("table", 0);
 
       await updateSelSetIds();
       const set_descr = await pp.getSetDescription(getSelSetId());
       document.getElementById("num-enries").innerHTML = ` (${set_descr.num_alignments})`;
+      document.getElementById("link-nonred").href = `./nonredundant.html?set=${set_descr.id}`;
 
       const urlParams = new URLSearchParams(window.location.search);
       const filter = {}
@@ -173,7 +168,7 @@
           if (msg.data.value % 517 != 0) {
             return;
           }
-          progressSet(msg.data.value/set_descr.num_alignments);
+          pp.progressSet(msg.data.value/set_descr.num_alignments);
         } else if (msg.data.type == "done") {
           var table = new Tabulator("#table", {
             height: "811px",
@@ -185,7 +180,7 @@
             // paginationSize:30,
             columns: [
               {
-                title:"complex PDB", field:"SEEDPB", formatter: formatPdb,
+                title:"complex PDB", field:"SEEDPB", formatter: formatPdbB,
               },
                                 
               {
@@ -198,7 +193,7 @@
                 title:"complex cofactors", field:"COF", formatter: getFormatCof(0),
               },
               {
-                title:"u PDB", field:"SEEDPU", formatter: formatPdb,
+                title:"u PDB", field:"SEEDPU", formatter: formatPdbU,
               },
               {
                 title:"u1 sim.", field:"UALIGNEDIRATIO",

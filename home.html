@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
   <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
   <script type="text/javascript" src="js/pp_helper.js"></script>
+  <script type="text/javascript" src="js/pp_layout.js"></script>
   <style>
     #main {
       background: 
@@ -24,8 +25,8 @@
   </style>
 </head>
 <body>
-  <header id="pp-nav" class="mb-auto"></header>
-  <script type="text/javascript" src="js/pp_layout.js"></script>
+  <script>pplayout.init();</script>
+  <header id="pp-nav" class="mb-auto"></header><script>pplayout.nav();</script>
   <div id="main" class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     <section class="py-5 text-center container">
       <div class="row py-lg-5">
@@ -37,10 +38,10 @@
         <div class="col-lg-6 col-md-8 mx-auto">
           <h3 class="fw-light">Data sets for protein-protein docking</h3>
           <p class="lead text-muted">ProPairs provides data sets of protein-protein pairs - 
-            PDB files of superposed binging partners in bound and unbound state.
+            PDB files of superposed binding partners in bound and unbound state.
           </p>
           <p>
-            <a href="#" class="btn btn-primary my-2">Interactive</a>
+            <a href="nonredundant.html" class="btn btn-primary my-2">Interactive</a>
             <a href="dl_pdb.html" class="btn btn-secondary my-2">Download</a>
           </p>
         </div>

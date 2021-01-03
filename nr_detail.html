@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="shortcut icon" href="css/propairs_logo_fav.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script type="text/javascript" src="js/tabulator.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+<link rel="stylesheet" href="css/tabulator.min.css" type="text/css"/>
+<script type="text/javascript" src="js/pp_helper.js"></script>
+<script type="text/javascript" src="js/pp_layout.js"></script>
+<style>
+
+  :root {
+    --color-u1: #c9d4fd;
+    --color-u2: #BBFFBB;
+    --color-u1d: #bdc8f3;
+    --color-u2d: rgb(172, 240, 172);
+    --color-u1dd: #a6b0d8;
+    --color-u2dd: rgb(146, 206, 146);
+  }
+
+
+  
+/*------------------*/
+
+#dbDetailData span.emph {
+   display: block;
+   float: left;
+   width: 100px;
+   min-height: 18px;
+   font-weight: bold;
+}
+#dbDetailData span.pdb {
+   width: 50px;
+   font-weight: bold;
+   color: #000;
+   font-size: 13px;
+   line-height: 30px;
+}
+#dbDetailData .aln {
+   text-align: center;
+   width: 540px;
+   margin: 10px;
+}
+#dbDetailData .aln > button {
+   width: 200px;
+}
+#dbDetailData .alnData {
+   text-align: left;
+   overflow: auto;
+   padding: 5px;
+}
+#dbDetailData .alnData > span {
+   font-family: "Courier",monospace;
+   white-space: pre;
+   font-size: 14px;
+   line-height: 18px;
+}
+
+/*------------------*/
+
+#dbDetailData table {
+   table-layout: fixed;
+   overflow: hidden;
+   border-spacing: 0;
+   border-collapse: unset;
+}
+#dbDetailData .border {
+   width: 10px;
+}
+#dbDetailData .space {
+   width: 30px;
+}
+#dbDetailData .content {
+   width: 240px;
+}
+#dbDetailData tr.spaceb td {
+   padding-bottom: 10px;
+}
+#dbDetailData tr.spaceh td {
+   padding-top: 10px;
+}
+/*-- middle --*/
+#dbDetailData table td:nth-child(4) {
+   text-align: center;
+   color: #000;
+   font-size: 14pt;
+}
+/*-- content --*/
+#dbDetailData td:nth-child(2), #dbDetailData td:nth-child(6),
+#dbDetailData th:nth-child(2), #dbDetailData th:nth-child(6){
+   border-left: 2px solid gray;
+   border-right: 2px solid gray;
+   text-indent: 5px;
+   line-height: 18px;
+}
+#dbDetailData th {
+   font-size: 14px;
+   line-height: 24px;
+   text-indent: 10px;
+   color: #FFF;
+   border: solid 2px;
+   text-align: left;
+}
+#dbDetailData tr.last td:nth-child(2), #dbDetailData tr.last td:nth-child(6) {
+   border-bottom: 2px solid gray;
+}
+/*-- b1 --*/
+#dbDetailData tr.x1 th:nth-child(2) {
+   background-color: #A183CE;
+   border: solid 2px #A183CE;
+}
+#dbDetailData tr.x1 td:nth-child(2) {
+   background-color: #DCC7FC;
+   border-color: #A183CE;
+}
+/*-- u1 --*/
+#dbDetailData tr.x1 th:nth-child(6) {
+   background-color: #2A41A0;
+   border: solid 2px #2A41A0;
+}
+#dbDetailData tr.x1 td:nth-child(6) {
+   background-color: #C7D2FF;
+   border-color: #2A41A0;
+}
+/*-- b2 --*/
+#dbDetailData tr.x2 th:nth-child(2) {
+   background-color: #78AD5C;
+   border: solid 2px #78AD5C;
+}
+#dbDetailData tr.x2 td:nth-child(2) {
+   background-color: #D3FFBB;
+   border-color: #78AD5C;
+}
+/*-- u2 --*/
+#dbDetailData tr.x2 th:nth-child(6) {
+   background-color: #2F813C;
+   border: solid 2px #2F813C;
+}
+#dbDetailData tr.x2 td:nth-child(6) {
+   background-color: #BBFFBB;
+   border-color: #2F813C;
+}
+/*-- bc --*/
+#dbDetailData tr.bc td:nth-child(2) {
+   border: 2px solid #CCC;
+   background-color: #CCC;
+}
+#dbDetailData tr.bc td:nth-child(6) {
+   border: 0px solid #FFF;
+}
+/*-- b gray --*/
+/* col */
+#dbDetailData tr td:nth-child(1) {
+   border: 2px solid #CCC;
+   background-color: #CCC;
+}
+#dbDetailData tr td:nth-child(3) {
+   border: 2px solid #CCC;
+   background-color: #CCC;
+}
+/* row */
+#dbDetailData tr:first-child td {
+   border: 0px solid #FFF;
+   padding: 5px;
+}
+#dbDetailData tr:last-child td {
+   border: 0px solid #FFF;
+   padding: 5px;
+}
+#dbDetailData tr:first-child td:nth-child(2) {
+   border: 2px solid #CCC;
+   background-color: #CCC;
+}
+#dbDetailData tr:last-child td:nth-child(2) {
+   border: 2px solid #CCC;
+   background-color: #CCC;
+}
+/* corners */
+#dbDetailData tr:first-child td:nth-child(1) {
+   border-radius: 5px 0px 0px 0px;
+}
+#dbDetailData tr:first-child td:nth-child(3) {
+   border-radius: 0px 5px 0px 0px;
+}
+#dbDetailData tr:last-child td:nth-child(1) {
+   border-radius: 0px 0px 0px 5px;
+}
+#dbDetailData tr:last-child td:nth-child(3) {
+   border-radius: 0px 0px 5px 0px;
+}
+
+
+
+
+</style>
+</head>
+<body>
+  <script>pplayout.init();</script>
+  <header id="pp-nav" class="mb-auto"></header><script>pplayout.nav();</script>
+  <div class="container">
+    <div class="my-4">
+      <span id="headline" class="h2 py-lg-3">Detail view</span><br>
+      <span id="subheadline" class="py-lg-3"></span>
+    </div>
+    <div id="dbDetailData"> 
+      <div class="aln" data-id="aln1"><button title="show interface alignments">Show interface alignment (similarity=100%)</button><div class="alnData"></div></div>
+      <table>
+      <colgroup>
+        <col span="1" class="border">
+        <col span="1" class="content">
+        <col span="1" class="border">
+        <col span="1" class="space">
+        <col span="1" class="border">
+        <col span="1" class="content">
+        <col span="1" class="border">
+      </colgroup>
+      <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr class="x1"><td></td><th>Bound 1</th><td></td><td></td><td></td><th>Unbound 1</th><td></td></tr>
+      <tr class="x1"><td></td><td></td><td></td><td></td><td></td><td id="val-u1name">{{u1name}}</td><td></td></tr>
+      <tr class="x1 spaceb"><td></td><td></td><td></td><td></td><td></td><td id="val-u1type">{{u1type}}</td><td></td></tr>
+      <tr class="x1 spaceb"><td></td><td><span class="emph">Chains:</span><span id="val-b1c">{{b1c}}</span></td><td></td><td></td><td></td><td><span class="emph">Chains:</span><span id="val-u1c">{{u1c}}</span></td><td></td></tr>
+      <tr  class="x1"><td></td>     <td  title="chains participating in the interface"><span class="emph">Int. Chains:</span><span id="val-b1ci">{{b1ci}}</span></td><td></td><td>&rarr;</td><td></td><td title="chains participating in the interface"><span class="emph">Int. Chains:</span><span id="val-u1ci">{{u1ci}}</span></td><td></td></tr>
+      <tr class="x1"><td></td>      <td title="number of C&alpha; atoms in the interface"><span class="emph">Int. C&alpha;:</span><span id="val-b1ca">{{b1ca}}</span></td><td></td><td></td><td></td><td title="RMSD to the interface of the bound structure"><span class="emph">Int. RMSD:</span><span id="val-u1irmsd">{{u1irmsd}}</span></td><td></td></tr>
+      <tr class="x1 cof"><td></td>  <td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span id="val-b1gaps">{{b1gaps}}</span></td><td></td><td></td><td></td><td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span id="val-u1gaps">{{u1gaps}}</span></td><td></td></tr>
+      <tr class="x1 last spaceb"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+      <tr class="bc spaceh"><td></td><td id="val-bname">{{bname}}</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr class="bc spaceb"       ><td></td><td id="val-btype">{{btype}}</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <!-- <tr class="bc spaceb"><td></td><td title="show interface cluster"><button id="clus" value="{{cluster}}"">Show sim. interfaces</button></td><td></td><td></td><td></td><td></td><td></td></tr> -->
+      <tr class="x2"><td></td><th>Bound 2</th><td></td><td></td><td></td><th>Unbound 2</th><td></td></tr>
+      <tr class="x2"><td></td><td></td><td></td><td></td><td></td><td id="val-u2name">{{u2name}}</td><td></td></tr>
+      <tr class="x2 spaceb"><td></td><td></td><td></td><td></td><td></td><td id="val-u2type">{{u2type}}</td><td></td></tr>
+      <tr class="x2 spaceb"><td></td><td><span class="emph">Chains:</span><span id="val-b2c">{{b2c}}</span></td><td></td><td></td><td></td><td ><span class="emph">Chains:</span><span id="val-u2c">{{u2c}}</span></td><td></td></tr>
+      <tr class="x2"><td></td><td  title="chains participating in the interface"><span class="emph">Int. Chains:</span><span id="val-b2ci">{{b2ci}}</span></td><td></td><td>&rarr;</td><td></td><td title="chains participating in the interface"><span class="emph">Int. Chains:</span><span id="val-u2ci">{{u2ci}}</span></td><td></td></tr>
+      <tr class="x2"><td></td><td  title="number of C&alpha; atoms in the interface"><span class="emph">Int. C&alpha;:</span><span id="val-b2ca">{{b2ca}}</span></td><td></td><td></td><td></td><td title="RMSD to the interface of the bound structure"><span class="emph">Int. RMSD:</span><span id="val-u2irmsd">{{u2irmsd}}</span></td><td></td></tr>
+      <tr class="x2 cof"><td></td><td  title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span id="val-b2gaps">{{b2gaps}}</span></td><td></td><td></td><td></td><td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span id="val-u2gaps">{{u2gaps}}</span></td><td></td></tr>
+      <tr class="x2 last spaceb"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      </table>
+      <div class="aln" data-id="aln2"><button title="show interface alignments">Interface Similarity: {{u2sim}}</button><div class="alnData"></div></div>
+    </div>
+  </div>
+  <div>
+    <a href="comprehensive.html?set=2013-11-01&filterCLUSID=688">Show all similar unbound structures (binding partner 1)</a><br>
+    <a href="comprehensive.html?set=2013-11-01&filterCLUSID=688">Show all similar unbound structures (binding partner 2)</a><br>
+    <a href="comprehensive.html?set=2013-11-01&filterCLUSID=688">Show all similar interfaces</a><br>
+
+    <!-- CBI1: "A"
+    CBI2: "D"
+    CLUSID: "171"
+    COF: ";F:222(MG),;F:223(GDP),;"
+    CU1: "AB"
+    SEEDPB: "1a2k1"
+    SEEDPU: "1oun1"
+    UALIGNEDIRATIO: "0.96"
+    UIRMSD: "1.64" -->
+
+  </div>
+  <footer id="pp-footer"></footer><script>pplayout.footer();</script>
+  <script>
+    function _getPdbName(n) {
+      if (n.length <= 2) return n;
+      var t = n.charAt(4).match(/[0-9]/)
+        ? `(biol.unit ${n.charAt(4)})`
+        : `(Model ${"a".charCodeAt(0)-n.charCodeAt(4)+1})`;
+      return `<b><a href="https://www.rcsb.org/structure/${n.substr(0,4)}" target="_blank">${n.substr(0,4)}</a></b> ${t}`;
+    }
+
+    function _getRmsd(r) {
+      return `${r} Å`;
+    }
+
+    (async function(){
+      const urlParams = new URLSearchParams(window.location.search);
+      const set_id = urlParams.get("set");
+      console.log(set_id);
+      const seed_idx = urlParams.get("id");
+      console.log(seed_idx);
+
+      
+      const cjsn = await (async function(){
+        const data_url = `./data/${set_id}/info/${seed_idx}/complex.json`;
+        const r = await fetch(data_url, {
+          method: "GET"
+        });
+        return await r.json();
+      })();
+      
+      console.log(cjsn);
+      
+      cjsn.bname = _getPdbName(cjsn.bp);
+      cjsn.u1name = _getPdbName(cjsn.u1p);
+      cjsn.u2name = _getPdbName(cjsn.u2p);
+      cjsn.u1irmsd = _getRmsd(cjsn.u1irmsd);
+      cjsn.u2irmsd = _getRmsd(cjsn.u2irmsd);
+
+      document.getElementById("headline").innerHTML = `Detail view for complex ${cjsn.bp} ${cjsn.b1ci}:${cjsn.b2ci}`;
+      document.getElementById("subheadline").innerHTML = `(${seed_idx}/${set_id})`;
+
+      
+      
+      Object.entries(cjsn).forEach(([k,v]) => {
+        let e = document.getElementById(`val-${k}`);
+        if (e) e.innerHTML = v;
+      });
+      
+      
+    })();
+  </script>
+</body>
+</html>
+

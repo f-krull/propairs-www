@@ -8,17 +8,18 @@
   <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
   <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
   <script type="text/javascript" src="js/pp_helper.js"></script>
+  <script type="text/javascript" src="js/pp_layout.js"></script>
   <style>
   </style>
 </head>
 <body>
-  <header id="pp-nav" class="mb-auto"></header>
-  <script type="text/javascript" src="js/pp_layout.js"></script>
+  <script>pplayout.init();</script>
+  <header id="pp-nav" class="mb-auto"></header><script>pplayout.nav();</script>
   <div class="container">
     <h2 class="py-lg-3">Flat-file tables</h2>
     <div class="row">
       <div class="col-lg-8">
-        <p> 
+        <p>
           Each file listed below represents a ProPairs data set. The files are human-readable flat-file tables with
           each row containing information about one detected interface and one corresponding unbound structure.
           Since multiple unbound structures can be assigned to same interface, the total number of entries in the 
@@ -33,18 +34,7 @@
     <div id="plain-files" class="mt-lg-3"">Loading...</div>
   </div>
 
-  <footer class="text-muted py-3 mt-lg-4">
-    <div class="container">
-      <hr>
-      <p class="mb-1">© 2020 by F. Krull, Universitetet i Oslo</p>
-      <p class="mb-1">
-        Krull, F., Korff, G., Elghobashi-Meinhardt, N., &amp; Knapp, E. W. "ProPairs: A Data Set for Protein-Protein Docking" 
-      <i>Journal of Chemical Information and Modeling</i> <b>2015</b>, 55 (7), 1495–1507.
-      <a href=http://dx.doi.org/10.1021/acs.jcim.5b00082 target="_blank">
-        DOI: 10.1021/acs.jcim.5b00082
-      </a>
-    </div>
-  </footer>
+  <footer id="pp-footer"></footer><script>pplayout.footer();</script>
   <script type="text/javascript" src="js/pp_dl.js"></script>
 </body>
 </html>
