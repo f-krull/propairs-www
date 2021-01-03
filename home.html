@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ProPairs</title>
+  <link rel="shortcut icon" href="css/propairs_logo_fav.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+  <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="js/pp_helper.js"></script>
+  <style>
+    #main {
+      background: 
+        radial-gradient(circle, var(--color-v) 300px, transparent 900px),
+        var(--image);
+      background-position: center center;
+      background-size: cover;
+      background-blend-mode: 
+        var(--blend-top, normal),
+        normal;
+      --image: url("img/example_set_16x16.webp");
+      --color-v: rgb(255, 255, 255, 0.85);
+    }
+  </style>
+</head>
+<body>
+  <header id="pp-nav" class="mb-auto"></header>
+  <script type="text/javascript" src="js/pp_layout.js"></script>
+  <div id="main" class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <section class="py-5 text-center container">
+      <div class="row py-lg-5">
+        <div class="col-auto mx-auto">
+          <img src="img/propairs_logo_727x181.png" class="mx-auto" width="480px" height="120px"> 
+        </div>
+      </div>
+      <div class="row py-lg-5">
+        <div class="col-lg-6 col-md-8 mx-auto">
+          <h3 class="fw-light">Data sets for protein-protein docking</h3>
+          <p class="lead text-muted">ProPairs provides data sets of protein-protein pairs - 
+            PDB files of superposed binging partners in bound and unbound state.
+          </p>
+          <p>
+            <a href="#" class="btn btn-primary my-2">Interactive</a>
+            <a href="dl_pdb.html" class="btn btn-secondary my-2">Download</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="text-muted py-3">
+    <div class="container">
+      <p class="mb-1">© 2020 by F. Krull, Universitetet i Oslo</p>
+      <p class="mb-0">
+        Krull, F., Korff, G., Elghobashi-Meinhardt, N., &amp; Knapp, E. W. "ProPairs: A Data Set for Protein-Protein Docking" 
+      <i>Journal of Chemical Information and Modeling</i> <b>2015</b>, 55 (7), 1495–1507.
+      <a href=http://dx.doi.org/10.1021/acs.jcim.5b00082 target="_blank">
+        DOI: 10.1021/acs.jcim.5b00082
+      </a>
+    </div>
+  </footer>
+</body>
+</html>

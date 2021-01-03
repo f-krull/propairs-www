@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="shortcut icon" href="css/propairs_logo_fav.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script type="text/javascript" src="js/tabulator.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+<link rel="stylesheet" href="css/tabulator.min.css" type="text/css"/>
+<script type="text/javascript" src="js/pp_helper.js"></script>
+<style>
+  #table {
+    background-color:#fff;
+    /* border: 1px solid #333; */
+    border-radius: 10px;
+  }
+  #table .tabulator-header {
+    /* background-color:#333; */
+    /* color:#fff; */
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+  <header id="pp-nav" class="mb-auto"></header>
+  <script type="text/javascript" src="js/pp_layout.js"></script>
+  <div class="container">
+    <h2 class="py-lg-3">Comprehensive ProPairs data set</h2>
+    
+    <!-- <div class="row">
+      <div class="col-auto form-group">
+        <label for="sel-set-id" class="form-label">Data set version:</label>
+        <select id="sel-set-id" class="form-control" name="set-id" disabled></select>
+      </div>
+    </div> -->
+    <div class="row">
+      <div class="col">
+        <p>
+          In this data set, all interfaces and unbound structures identified by ProPairs are included. 
+          Due to the large number of entries <span id="num-enries"></span>, this view be can be slow.
+        </p> 
+        <p>
+          For better performance, please consider <a href="dl_pff.html">downloading the data set</a> or viewing 
+          the smaller, <a href="#">non-redundant data set</a>. Both options feature the data in more detail.
+        </p>
+      </div>
+      <div class="col-md-3 form-group">
+        <label for="sel-set-id" class="form-label">Data set version:</label>
+        <select id="sel-set-id" class="form-control" name="set-id" disabled></select>
+      </div>
+    </div>
+    <div id="table" class="mt-4"></div>
+  </div>
+  <script>
+
+    async function updateSelSetIds() {
+      const url_params = new URLSearchParams(window.location.search);
+      const curr_set = url_params.get("set");
+      var es = document.getElementById("sel-set-id");
+      (await pp.getSetIds()).forEach(e => {
+        var eo = document.createElement("option");
+        eo.value = e;
+        eo.innerHTML = e;
+        eo.selected = e == curr_set;
+        es.appendChild(eo)
+      });
+      es.disabled = false;
+      es.onchange = function() {
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("set", getSelSetId());
+        window.location.search = searchParams.toString();
+      };
+    }
+
+    function getSelSetId() {
+      return document.getElementById("sel-set-id").value;
+    }
+
+    function progressInit(parentId) {
+      var ep = document.getElementById(parentId);
+      let es = document.createElement("div");
+      // es.innerHTML = "Loading data...";
+      ep.appendChild(es);
+      es.id = "pp-progress-text";
+      es.classList.add("progress");
+      let e = document.createElement("div");
+      es.appendChild(e);
+      e.id = "pp-progress";
+      e.classList.add("progress-bar");
+      e.style.width = "0%";
+    }
+    function progressSet(p) {
+      // document.getElementById("pp-progress-text").innerHTML = `Loading... ${(p*100).toFixed(2)}%`;
+      var e = document.getElementById("pp-progress");
+      e.style.width = `${p*100}%`;
+      e.innerHTML = `${(p*100).toFixed(2)}%`;
+    }
+
+    function formatPdb(cell, _, _) {
+      const row = cell.getData();
+      const pdb4 = cell.getValue().substr(0,4);
+      const biou = cell.getValue().substr(4,1);
+      let es = document.createElement("span");
+      let ea = document.createElement("a");
+      es.appendChild(ea)
+      ea.innerHTML = `${pdb4}`;
+      ea.href = `https://www.rcsb.org/structure/${pdb4}`;
+      ea.target = "_blank";
+      es.append(` (${biou}) ${row.CBI1}:${row.CBI2}`);
+      return es;
+    }
+
+    function formatClusterId(cell, _, _) {
+      var searchParams = new URLSearchParams(window.location.search);
+      searchParams.set("filterCLUSID", cell.getValue());
+      let ea = document.createElement("a");
+      ea.innerHTML = `${cell.getValue()}`;
+      ea.href = `${location.protocol}//${location.host}${location.pathname}?${searchParams.toString()}`;
+      ea.target = "_blank";
+      return ea;
+    }
+
+    function getFormatCof(cidx) {
+      return function formatCof(cell, _, _) {
+        const inp = cell.getValue().split(";").filter(e => e != "");
+        const cofs = inp.map(e => {
+          return e.split(",")[cidx];
+        })
+          .filter(e => e != "")
+          .map(e => {
+            e = e.replace(/^.*\(/,"")
+            e = e.replace(/\)$/,"")
+            return e;
+          });
+        // make unique
+        let es = document.createElement("span");
+        [...new Set(cofs)].sort().forEach(e => {
+          let ea = document.createElement("a");
+          es.appendChild(ea)
+          ea.innerHTML = `${e}`;
+          ea.href = `https://www.rcsb.org/ligand/${e}`;
+          ea.target = "_blank";
+          es.append(" ");
+        });
+        return es;
+      }
+    }
+    
+
+    (async function(){
+      progressInit("table");
+
+      await updateSelSetIds();
+      const set_descr = await pp.getSetDescription(getSelSetId());
+      document.getElementById("num-enries").innerHTML = ` (${set_descr.num_alignments})`;
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const filter = {}
+      // use very param starting with "filter"
+      urlParams.forEach(function(v, k) {
+        if (k.startsWith("filter")) {
+          filter[k.replace(/^filter/,"")] = v;
+        }
+      });
+      
+      var ppfw = new Worker("./js/pffp_worker.js");
+
+      ppfw.postMessage({type: "init", value: {filter: filter }});
+      
+      ppfw.onmessage = function(msg) {
+        if (msg.data.type == "progress") {
+          if (msg.data.value % 517 != 0) {
+            return;
+          }
+          progressSet(msg.data.value/set_descr.num_alignments);
+        } else if (msg.data.type == "done") {
+          var table = new Tabulator("#table", {
+            height: "811px",
+            layout: "fitColumns",
+            data: msg.data.value,
+            pagination: "local",
+            tooltips: true,
+            tooltipsHeader: true,
+            // paginationSize:30,
+            columns: [
+              {
+                title:"complex PDB", field:"SEEDPB", formatter: formatPdb,
+              },
+                                
+              {
+                title:"#intf.-Cα", field:"BNUMI1CA",
+              },
+              {
+                title:"#S2 bonds", field:"BNUMS2BONDS",
+              },
+              {
+                title:"complex cofactors", field:"COF", formatter: getFormatCof(0),
+              },
+              {
+                title:"u PDB", field:"SEEDPU", formatter: formatPdb,
+              },
+              {
+                title:"u1 sim.", field:"UALIGNEDIRATIO",
+              },
+              {
+                title:"u1 cofactors", field:"COF", formatter: getFormatCof(1),
+              },
+              {
+                title:"u1 iRMSD", field:"UIRMSD"
+              },{
+                title:"cluster ID", 
+                field:"CLUSID", 
+                formatter: formatClusterId,
+                tooltip: (cell) => `belongs to interface cluster ${cell.getValue()}`
+              },
+            ],
+          });
+        }
+      }
+      
+      
+      //const data_url = "./data/2020-12-30test/propairs_set_2020-12-30test_unpaired.txt.gz";
+      const data_url = `./data/${getSelSetId()}/propairs_set_${getSelSetId()}_unpaired_comprehensive.txt.gz`;
+      const r = await fetch(data_url, {
+        method: "GET"
+      });
+      
+      var reader = r.body.getReader();
+      while (true) {
+        const rx = await reader.read();
+        if (rx.done) {
+          break;
+        }
+        ppfw.postMessage({type: "data", value: {
+          gz: new Uint8Array(await rx.value)
+        }});
+      }
+    })();
+  </script>
+</body>
+</html>
+
