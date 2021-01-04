@@ -175,7 +175,7 @@ function _createFooter(e) {
     `
       <div class="container">
         <hr>
-        <p class="mb-1">© 2020 by F. Krull, Universitetet i Oslo</p>
+        <p class="mb-1">© 2021 by F. Krull, Universitetet i Oslo</p>
         <p class="mb-1">
           Krull, F., Korff, G., Elghobashi-Meinhardt, N., &amp; Knapp, E. W. "ProPairs: A Data Set for Protein-Protein Docking" 
         <i>Journal of Chemical Information and Modeling</i> <b>2015</b>, 55 (7), 1495–1507.
@@ -212,7 +212,6 @@ const pplayout = {
 
   init: () => {
     pplayout.navCurr = _getNavCurr(_navCfg);
-    console.log(location.pathname.split("/").pop());
     if (pplayout.navCurr) document.title = `ProPairs ${pplayout.navCurr.title}`;
   },
   nav: () =>  _createNav(_navCfg, document.getElementById("pp-nav")),

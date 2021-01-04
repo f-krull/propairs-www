@@ -94,7 +94,9 @@ function _createDlItem(ep, name, url, text) {
         _createDlItem(ecb,
           "representative ProPairs set",
           `data/${e.id}/propairs_set_${e.id}_paired_representative.txt.gz`,
-          `${e.num_representative_interfaces} interfaces (similar interfaces have been removed; only representative complexes and unbound structures are contained)`,
+          `${e.num_representative_interfaces} interfaces (similar interfaces have been removed; ` +
+            `only representative complexes and unbound structures are contained). ` +
+            `An interactive view of this data set can be found <a href="nonredundant.html?set=${e.id}">here</a>.`,
         );
       }
     });
