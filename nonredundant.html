@@ -119,9 +119,9 @@
     </div>
 
     <div id="filter">
-      <button id="btnFilterOpen" class="btn btn-outline-primary d-inline-flex align-items-center mb-1" data-bs-toggle="collapse" aria-controls="filter-collapse" aria-expanded="true" data-bs-target="#filter-collapse">Filter</button>
+      <button id="btnFilterOpen" class="btn btn-outline-primary d-inline-flex align-items-center mb-1" data-bs-toggle="collapse" aria-controls="filter-collapse" aria-expanded="false" data-bs-target="#filter-collapse">Filter</button>
       <span id="filterStatus" class="ms-3"></span>
-      <div class="px-3 collapse show" id="filter-collapse">
+      <div class="px-3 collapse hide" id="filter-collapse">
         <hr>
         <div class="row mb-1">
           <label for="filterCaMin" class="col-md-2 col-form-label col-form-label-md">Num. interface-Cα:</label>
@@ -224,12 +224,6 @@
         </div>
         <hr>
       </div>
-      <!-- <ul class="list-unstyled ps-3 collapse hide" id="contents-collapse">
-        <li><a class="d-inline-flex align-items-center rounded" href="#typography">Typography</a></li>
-        <li><a class="d-inline-flex align-items-center rounded" href="#images">Images</a></li>
-        <li><a class="d-inline-flex align-items-center rounded" href="#tables">Tables</a></li>
-        <li><a class="d-inline-flex align-items-center rounded" href="#figures">Figures</a></li>
-      </ul> -->
     </div>
   
 
@@ -308,6 +302,12 @@
         keyword: document.getElementById("filterKeyword").value,
       };
       let rangefunc = fc.apply_ranges_to == "1" ? (a,b) => (a || b) : (a,b) => (a && b);
+      let coffunc = (function(v){
+        if (v == 0) return (bCof) => bCof.length == 0;
+        if (v == 1) return (bCof) => true;
+        if (v == 2) return (bCof) => bCof.length > 0;
+        throw "coffunc";
+      })(document.getElementById("filterCof").value);
       let rf = rows_jsn
         .filter(e => (fc.num_ca.min <= parseFloat(e.bNumCa) && parseFloat(e.bNumCa) <= fc.num_ca.max))
         .filter(e => (e.bNumS2 === undefined) || (fc.num_s2.min <= parseFloat(e.bNumS2) && parseFloat(e.bNumS2) <= fc.num_s2.max))
@@ -322,6 +322,7 @@
         .filter(e => fc.include_nmr || (e.u1Name.charAt(4).match(/[0-9]/) && (e.u2Name.charAt(0) == "-" || e.u2Name.charAt(4).match(/[0-9]/))))
         .filter(e => fc.include_missing_unbound || (e.u2Name.charAt(0) != "-"))
         .filter(e => e.bType.toLowerCase().includes(fc.keyword.toLowerCase()))
+        .filter(e => coffunc(e.bCof))
         ;
       document.getElementById("filterStatus").innerHTML = `${rf.length} / ${rows_jsn.length} displayed`;
       table.replaceData(rf);
@@ -354,7 +355,6 @@
     function progressInit(parentId) {
       var ep = document.getElementById(parentId);
       let es = document.createElement("div");
-      // es.innerHTML = "Loading data...";
       ep.appendChild(es);
       es.id = "pp-progress-text";
       es.classList.add("progress");
@@ -365,7 +365,6 @@
       e.style.width = "0%";
     }
     function progressSet(p) {
-      // document.getElementById("pp-progress-text").innerHTML = `Loading... ${(p*100).toFixed(2)}%`;
       var e = document.getElementById("pp-progress");
       e.style.width = `${p*100}%`;
       e.innerHTML = `${(p*100).toFixed(2)}%`;
@@ -389,9 +388,6 @@
       await updateSelSetIds();
       const set_descr = await pp.getSetDescription(getSelSetId());
 
-      // document.getElementById("num-enries").innerHTML = ` (${set_descr.num_alignments})`;
-      // const urlParams = new URLSearchParams(window.location.search);
-
       rows_jsn = await (async function(){
         const data_url = `./data/${getSelSetId()}/propairs_set_${getSelSetId()}_paired_representative.json`;
         const r = await fetch(data_url, {
@@ -404,8 +400,12 @@
         });
       })();
 
+      // fix u2 cofactors; has "-" if NA
+      rows_jsn = rows_jsn.map((e) => {
+        e.u2Cof = e.u2Cof.filter(e => e != "-");
+        return e;
+      });
 
-      
       {
         const kw = [...new Set(rows_jsn.map(
         e => e.bType
