@@ -3,7 +3,7 @@ const _navCfg = {
     {
       type: "button",
       title: "Home",
-      url: "home.html",
+      url: "index.html",
     },
     {
       type: "dropdown",
@@ -33,6 +33,21 @@ const _navCfg = {
           type: "button",
           title: "Flat-file tables",
           url: "dl_pff.html",
+        },
+      ]
+    }, {
+      type: "dropdown",
+      title: "Info",
+      entries: [
+        {
+          type: "button",
+          title: "FAQ",
+          url: "doc_faq.html",
+        },
+        {
+          type: "button",
+          title: "ProPairs algorithm",
+          url: "doc_algo.html",
         },
       ]
     },
@@ -107,7 +122,7 @@ function _createNav(nCfg, ep) {
     let ea = document.createElement("a");
     ecf.appendChild(ea);
     ea.classList.add("navbar-brand");
-    ea.href = "./home.html";
+    ea.href = "./index.html";
     let eimg = document.createElement("img");
     ea.appendChild(eimg);
     eimg.src = "img/propairs_a_89x89.png";
@@ -175,14 +190,14 @@ function _createFooter(e) {
     `
       <div class="container">
         <hr>
-        <p class="mb-1">© 2021 by F. Krull, Universitetet i Oslo</p>
-        <p class="mb-1">
+        <span class="mb-1">© 2021 by F. Krull, Universitetet i Oslo</span><br>
+        <span class="mb-1">
           Krull, F., Korff, G., Elghobashi-Meinhardt, N., &amp; Knapp, E. W. "ProPairs: A Data Set for Protein-Protein Docking" 
         <i>Journal of Chemical Information and Modeling</i> <b>2015</b>, 55 (7), 1495–1507.
         <a href="http://dx.doi.org/10.1021/acs.jcim.5b00082" target="_blank">
           DOI: 10.1021/acs.jcim.5b00082
         </a>
-      </p>
+      </span>
     </div>`;
 };
 

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ProPairs</title>
+  <link rel="shortcut icon" href="css/propairs_logo_fav.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+  <link rel="stylesheet" href="css/pp.css" type="text/css"/>
+  <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="js/pp_layout.js"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <style>
+  </style>
+</head>
+<body>
+  <script>pplayout.init();</script>
+  <header id="pp-nav" class="mb-auto"></header><script>pplayout.nav();</script>
+  <div class="container">
+    <h1>&#x1F6A7; under construction &#x1F6A7; </h1>
+    <h1 class="py-lg-3">The ProPairs algorithm</h1>
+    <div class="row">
+      <div class="col-xs-12 col-md-4">
+        <img class="img-responsive" src="img/about/seed_1.jpg" width="100%">
+      </div>
+      <div class="col-xs-12 col-md-8">
+        <h2 class="py-lg-3">Overview</h1>
+        <p>The ProPairs algorithm identifies protein docking complexes within the Protein Data Bank (PDB): For every PDB structure
+        the algorithm considers it as a <i>potential</i> docking complex and tries to detect all suitable unbound structures. 
+        If at least one suitable unbound structure is found, the initial PDB 
+        structure is considered to be a <i>legitimate</i> protein docking complex. 
+        </p>
+        <p>
+        Scanning the entire PDB with this approach has high computational costs. 
+        ProPairs uses parallelization and has efficient pre-filtering to avoid a combinatorial explosion. 
+        For a more detailed description of the ProPairs method, please refer to <a href="http://dx.doi.org/10.1021/acs.jcim.5b00082">[Krull et al. 2015]</a> or to the <a href="https://github.com/propairs/propairs">source code</a>.
+        </p>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-md-4">
+        <img class="img-responsive" src="img/about/seed_1.jpg" width="100%">
+      </div>
+      <div class="col-xs-12 col-md-8">
+        <h2>Interface Partitioning with the Unbound Assignment Algorithm</h2>
+        <p>The ProPairs algorithm identifies protein docking complexes within the Protein Data Bank (PDB): For every PDB structure
+        the algorithm considers it as a <i>potential</i> docking complex and tries to detect all suitable unbound structures. 
+        If at least one suitable unbound structure is found, the initial PDB 
+        structure is considered to be a <i>legitimate</i> protein docking complex. 
+        </p>
+        <p>
+        Scanning the entire PDB with this approach has high computational costs. 
+        ProPairs uses parallelization and has efficient pre-filtering to avoid a combinatorial explosion. 
+        For a more detailed description of the ProPairs method, please refer to <a href="http://dx.doi.org/10.1021/acs.jcim.5b00082">[Krull et al. 2015]</a> or to the <a href="https://github.com/propairs/propairs">source code</a>.
+        </p>
+
+      </div>
+      
+      
+    
+    
+    
+    <h2>
+    
+    </h2>
+    
+    <h3>
+    Asking Questions with Seeds
+    </h3>
+    
+    <p>
+    The core of the ProPairs algorithm is a <a href="https://github.com/f-krull/xtal/tree/master/src/xtalcompunbound">tool</a> that is able to answer simple yes/no questions: 
+    In the first example on the right we ask: 
+    </p>
+    <blockquote class="it">"Is the structure 1zvh a protein docking complex with the interface between the chain A and L 
+    and is chain A of 1ghl a suitable unbound structure for chain <b>A</b> of 1zvh?" </blockquote>
+    The answer is "no". But if we ask:
+    <blockquote class="it">"Is the structure 1zvh a protein docking complex with the interface between the chain L and A 
+    and is chain A of 1ghl a suitable unbound structure for chain <b>L</b> of 1zvh?" </blockquote>
+    <p>
+    The answer is "yes"!
+    </p>
+    
+    <img class="fright" style="width: 178px; height: 111px" src="img/about/seed_2.jpg"></img>
+    
+    <p>Such a question can be formulated as a tuple (pdbB, cB1, cB2, pdbU, cU1)  that we call a <b>seed</b>. 
+    The initial requirements for a seed are:
+    </p>
+      <ul>
+      <li>
+      pdbB is a PDB structure with at least two chains (cB1, and cB2)
+      </li>
+      <li>
+      cB1 and cB2 are in contact
+      </li>
+      <li>
+      pdbU is a PDB structure with at least one chain (cU1)
+      </li>
+      <li>
+      cB1 has high sequence identity to cU1
+      </li>
+      <li>
+      pdbU has no chain with sequence identity to cB2
+      </li>        
+      </ul>
+    <p>
+    If any of these requirements are not met, the answer of the algorithm is "no". 
+    The idea is to ask a very specific question that gives a deterministic answer. 
+    Later we show how to use a pre-filter to find promising questions and how to 
+    combine all the answers to generate the ProPairs data set. 
+    </p>
+      
+
+    <img class="fleft" style="width: 302px; height: 131px" src="img/about/seed_3.jpg"></img>
+    
+    <h3>
+    Binding Partners with Multiple Chains: Chain-Assignments
+    </h3>
+    
+    <p>In many cases the individual binding partners of a docking complex consist of multiple chains and of course this 
+    is also the case for the suitable unbound structures. 
+    So how to recognize the unbound structure within the complex structure if both consist of multiple chains? 
+    The ProPairs algorithm computes the maximum common subgraph between the potential complex and the unbound structure:
+    </p> 
+       <ul>
+       <li>
+       Nodes correspond to chains and edges to chain interfaces. 
+       </li>
+       <li>
+       Chains are matched if their sequences have high sequence identity 
+       </li>
+       <li>
+       Chain interfaces are matched if they show high sequence identity of the residues involved in the interaction.
+       </li>
+       </ul>
+    <p>First, the algorithm looks for an initial assignment (cB1 to cU1) that is specified by the seed and then tries to expand this solution by further assignments. 
+    </p>
+    
+    <img class="fright" style="width: 281px; height: 211px" src="img/about/seed_4.jpg"></img>
+    <h3>
+    Summary
+    </h3>
+    <p>In short, the unbound assignment algorithm performs the following steps:
+       <ul>
+       <li>Start with seed (pdbB, cB1, cB2, pdbU, cU1)</li>
+       <li>Expand cB1 by matching chains with pdbU</li>
+       <li>Expand cB2 by unmatched chains of pdbB (check connectivity)</li>
+       <li>Compute interface between all chains of B1 and all chains of cB2</li>
+       <li>Check if no DNA is located in interface</li>
+       <li>Locate interface residues of cB1 in cU1 (by sequence alignments)</li>
+       <li>Superpose unbound structure with cB1 by interface residues</li>
+       <li>Expand cU1 by unmatched chains of pdbU (check for clashes)</li>
+       <li>Find cofactors in the interface regions and report matchings</li>
+       <li>Compute interface-RMSD of cB1 and cU1</li>
+       </ul>
+    <p>If a legitimate docking complex was found, we get: the interface specified and 
+    the chains of the unbound structure assigned to the bound binding partner.
+    </p>
+     
+    <h4>
+    Constraints
+    </h4>
+    
+    <p>Currently, for a potential protein docking complex only structures obtained by X-ray diffraction are considered. 
+    For the complex only the first biological unit that is specified by the PDB is used. The method discards any 
+    complexes or unbound structures that have DNA or RNA within the interface. 
+    Complexes that are homomers can not be detected by this approach.
+    </p>
+    
+    <h2>  
+    Computation of Seeds
+    </h2>    
+    
+    <p>The input of the unbound assignment algorithm is a seed (pdbB, cB1, cB2, pdbU, cU1)
+    consisting two structures and three chains. pdbB is a PDB structure with two or more
+    chains and has an assumed interface between the chains cB1 and cB2. pdbU is a PDB
+    structure that contains the chain cU1, which is the assumed unbound state of cB1.
+    We search the entire Protein Data Bank for any protein interactions with by
+    constructing all possible seeds with all combinations of proteins and chains and apply
+    the unbound assignment algorithm. However, the unbound assignment algorithm itself
+    has exponential time complexity and due to the high number of possible seeds, this
+    would cause a computational problem, which could require years to be solved.
+    </p>
+    
+    <p>It is not feasible to apply the interface partitioning described above to all PDB structures. For this reason we need an 
+    efficient pre-filter that produces only those seeds that have a high probability to result in a legitimate assignment. Moreover,
+    the pre-filter should have a zero false negative rate such that no seeds that result in a legitimate docking complex are filtered
+    out. There are two basic requirements a seed needs to fulfill in order to give a legitimate
+    docking complex: 
+    </p>
+       <ol>
+       <li>cU1 needs to have a high sequence identity to cB1.</li>
+       <li>pdbU does not contain any chain that has high sequence identity to cB2.</li>
+       </ol>
+    <p>Additionally, to reduce the number of seeds resulting in identical assignments, we require:
+    </p>
+       <ol start="3">
+       <li>cB1 and cB2 need to be in direct contact.</li>
+       </ol>
+    
+    <p>To be able to produce seeds that are able to meet these requirements, we compute
+    sequence identities between all chains within the PDB. We also compute
+    chain connectivity for every PDB structure. Using this
+    precomputed data along with relational algebra, we can efficiently identify every PDB
+    structure with two interfacing chains, of which at least one of the chains can be found
+    without the others in any existing structure. By restricting the seeds to only those that
+    fulfill the three basic requirements, we can lower the number of possibilities from 2.6e11
+    to 1e6 (Nov 2013) without omitting legitimate docking complexes. In about 50% a given
+    seed can identify a legitimate interface.
+    </p>
+    
+    <h2>From the Large to the Small ProPairs Data Set
+    </h2>
+    
+    <img class="fright" style="width: 200; height: 152px" src="img/about/similar-interfaces_example.jpg"></img>
+    
+    <p>In the previous steps we proposed a method to specify the interface chains for protein docking complexes. 
+    As a result we obtain the large ProPairs data set. This set contains two types of redundancies: 
+    </p>
+       <ul>
+       <li> redundancies between protein docking complexes </li>
+       <li> redundancies between the unbound structures assigned to a docking complex </li>
+       </ul>    
+
+    <h3>Detection of Similar Interfaces
+    </h3>
+       
+    <img class="fleft" style="width: 200; height: 150px" src="img/about/docking_units.jpg"></img>
+    
+    <p>Similar interfaces can be found between different structures of docking complexes and also,
+    due to symmetry, within a single structure. We require that the resulting set of interfaces 
+    is evenly distributed with respect to similarity and not to contain redundant data.
+    To accomplish this, our approach uses agglomerative hierarchical clustering, for which
+    we need to compute all pairwise distances for all interfaces.
+    Therefore, we obtain the similarity of two protein docking complexes (p1 and p2), where p1 consists of the docking units 
+    n1, m1 and p2 consists of the two docking units n2, m2. The <a href="https://github.com/f-krull/xtal/tree/master/src/xtaluniquecomp">algorithm</a> first 
+    computes sequence alignments between the docking units (n1->n2 and m1->m2) and then 
+    analyzes the coverage of the residues within the interfaces. The cross-combination (n1->m2 and m1->n2) is also considered.
+    Once, all pairwise interfaces of the large ProPairs data set are computed, we apply hierarchical clustering. 
+    </p>
+    
+    
+    <h3>The Small (Nonredundant) ProPairs Data Set
+    </h3>
+    
+    <h4>Representative Docking Complexes
+    </h4>
+    <p>
+    Following the clustering step, we choose from each interface cluster from the large ProPairs set exactly 
+    one representative docking complex that is to be assigned to the small ProPairs set. The representative structure is selected based 
+    on a ranking of all computed docking complexes that belong to the interface cluster. 
+    Higher-ranking candidates have a high structural quality (e.g. no residue gaps) and are close 
+    to the mediod of the cluster they belong to. 
+    </p>
+    
+    <h4>Representative Unbound Structures
+    </h4>
+    <p>
+    For each representative docking complex structure of the small ProPairs set, 
+    we rank all unbound structures previously assigned to either binding partner according to high structural quality and to high 
+    structural similarity to the binding partner within the docking complex. We include the highest-ranking 
+    pair of unbound structures with the bound structure in the small ProPairs set. During this step we require that the two unbound structures together possess the 
+    complete set of cofactors found in the interface of the docking complex.
+    </p>
+    
+    <img class="fright" style="width: 300; height: 300px" src="img/about/propairs_growth.jpg"></img>
+
+    <h2>
+    Updates
+    </h2>
+
+    <p>We designed the ProPairs algorithm to be able to deal with
+    the steady growth of the PDB. In 2013, when we developed the ProPairs algorithm, 
+    we created copy of the PDB. This copy gave us in 2,070 non-redundant complexes.
+    Since then, we modified ProPairs to support PDB's official snapshots that are created
+    every year in early January. The figure on the right shows the number of complexes that are
+    identified by ProPairs for all PDB snapshots since 2005.<br>
+    On this webpage we provide the ProPairs data set for the latest PDB snapshot. 
+    As of Jan&nbsp;2018, the ProPairs data set contains 3,268 non-redundant protein docking complexes. 
+    </p>
+  </div>
+
+  <footer id="pp-footer"></footer><script>pplayout.footer();</script>
+</body>
+</html>

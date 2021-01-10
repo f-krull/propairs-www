@@ -1,150 +1,64 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-   <meta charset="utf-8">
-   <meta name="description" content="ProPairs - Datasets for Protein-Protein Docking">
-   <meta name="keywords" content="Protein,Docking,Benchmark,Set,Dataset,ProPairs,Bound,Unound,Proteins,Structures">
-   <meta name="author" content="F. Krull">
-   <link rel="shortcut icon" href="css/propairs_logo_fav.ico">
-   <link rel="stylesheet" href="css/db.css" type="text/css"/>
-   <link rel="stylesheet" href="css/propairs.css" type="text/css"/>
-   <script type="text/javascript" src="js/jquery.min.js"></script>
-   <script type="text/javascript" src="js/ga.js"></script>
-   <script type="text/javascript" src="js/headerscroll.js"></script>
-   <title>ProPairs</title>
+  <meta charset="UTF-8">
+  <title>ProPairs</title>
+  <link rel="shortcut icon" href="css/propairs_logo_fav.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+  <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="js/pp_helper.js"></script>
+  <script type="text/javascript" src="js/pp_layout.js"></script>
+  <style>
+    #main {
+      background: 
+        radial-gradient(circle, var(--color-v) 300px, transparent 900px),
+        var(--image);
+      background-position: center center;
+      background-size: cover;
+      background-blend-mode: 
+        var(--blend-top, normal),
+        normal;
+      --image: url("img/example_set_16x16.webp");
+      --color-v: rgb(255, 255, 255, 0.85);
+    }
+  </style>
 </head>
-
-
 <body>
-   <header>
-    <a href="https://github.com/propairs/propairs"><img style="position: absolute; top: 0; right: 0; border: 0;"
-		src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-   <div class="banner">
-     <a href="index.html"></a>
-   </div>
-   <nav>
-   <ul>
-        <li><span>Home</span></li>
-        <li><a href="database.html">Database</a></li>
-        <li><a href="rawdata.html">Raw data</a></li>
-        <li><a href="sourcecode.html">Source code</a></li>
-        <li><a href="about.html">About</a></li>
-   </ul>
-   </nav>
-   </header>
-   
-   
+  <script>pplayout.init();</script>
+  <header id="pp-nav" class="mb-auto"></header><script>pplayout.nav();</script>
+  <div id="main" class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <section class="py-5 text-center container">
+      <div class="row py-lg-5">
+        <div class="col-auto mx-auto">
+          <img src="img/propairs_logo_727x181.png" class="mx-auto" width="480px" height="120px"> 
+        </div>
+      </div>
+      <div class="row py-lg-5">
+        <div class="col-lg-6 col-md-8 mx-auto">
+          <h3 class="fw-light">Data sets for protein-protein docking</h3>
+          <p class="lead text-muted">ProPairs provides data sets of protein-protein pairs - 
+            PDB files of superposed binding partners in bound and unbound state.
+          </p>
+          <p>
+            <a href="nonredundant.html" class="btn btn-primary my-2">Interactive</a>
+            <a href="dl_pdb.html" class="btn btn-secondary my-2">Download</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
 
-   <div id="body" class="padding maxwidth">
-   <div class="text">   
-      
-      <h1>ProPairs: A Data Set for Protein-Protein Docking</h1>
-      
-      <p>
-      ProPairs provides a set of protein-protein docking complexes with their unbound structures. <br> 
-      The set can be used to benchmark or to test docking algorithms. 
-      </p>
-<h3>Features</h3>
-<ul>
-<li>Protein-protein complexes with unbound binding partners</li>
-  <ul>
-    <li>interface-aligned and superposed PDB files of bound and unbound structures</li>
-    <li>mapping of cofactors between protein-protein complexes and their unbound structures</li>
-  </ul>
-<li>Non-redundant set of protein-protein complexes
-	<ul>
-  <li>clustering of all detected interfaces</li>
-	<li>only representative protein-protein complexes with their most representative unbound structures</li>
-	</ul></li>
-<li>Novel, fully automatic algorithm</li>
-  <ul>
-  <li>deterministic selection of structures</li>
-  <li>assigns suitable unbound structures to at least one of the two binding partners</li>
-  <li>uses only protein structures and biological assembly information from the PDB</li>
-  <li>frequent updates that include latest structures of PDB</li>
-  </ul>
-<li>Open source</li>
-  <ul>
-  <li>transparent procedure</li>
-  <li>easy to generate own sets</li>
-  <li>customizable</li>
-  </ul>
-</ul>
-      
-      
-      <p>For a multi-chain protein complex different partitions into two binding partners are possible.
-      Here, we use the existence of corresponding unbound structures in the PDB as the criterion for legitimate 
-      partitions of the considered protein complexes. 
-      </p>
-      
-      <h3>
-      Updates
-      </h3>
-      <table id="updates">
-      <tr>
-        <td>Apr/17&nbsp;2018</td>
-        <td>Updated data set (PDB snapshot: Jan/2018) with additional 
-           308 novel, non-redundant interfaces (105 with two unbound structures)</td>
-      </tr>
-      <tr>
-        <td>Jun/16&nbsp;2017</td>
-        <td>Updated data set (PDB snapshot: Jan/2017) with additional
-           331 novel, non-redundant interfaces (110 with two unbound structures) + updated webpage 
-      (<a href=https://github.com/propairs/propairs/commits/master>Commit</a>)</td>
-      </tr>
-      <tr>
-        <td>Apr/26&nbsp;2016</td>
-        <td>Updated data set (PDB snapshot: Jan/2016) + support interactive filtering by number of S2 bonds
-      (<a href=https://github.com/propairs/propairs/commit/1b93cb5688dabc083c6035c8f5b8c8b5f3c02154>Commit</a>)</td>
-      </tr>
-      <tr>
-        <td>Feb/18&nbsp;2016</td>
-        <td>ProPairs supports using time-stamped yearly snapshots of the PDB archive.
-      (<a href=https://github.com/propairs/propairs/commit/874a6b552e4b0994bf9aaa24929ee8093ef96538>Commit</a>)</td>
-      </tr>
-      <tr>
-        <td>Jul/06&nbsp;2015</td>
-        <td>The ProPairs webpage provides the data sets as single ZIP archives containing all PDB files. See "Raw data" for download links.
-      (<a href=https://github.com/f-krull/propairs-www/commit/4b36116f2795b44c01da59a766aa7189c8975e67>Commit</a>)</td>
-      </tr>
-      </table>
-      
-      
-      <h2>Contact
-      </h2>
-      <p>Please send comments and questions to <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;
-&#102;&#108;&#111;&#46;&#107;&#114;&#117;&#108;&#108;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">
-&#102;&#108;&#111;&#46;&#107;&#114;&#117;&#108;&#108;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a>
-      </p>
-
-      
-      <h2>
-      Reference
-      </h2>
-      <img class="fright" style="width: 61; height: 60px" src="css/propairs_logo_a.jpg"></img>
-      Krull, F., Korff, G., Elghobashi-Meinhardt, N., &amp; Knapp, E. W. "ProPairs: A Data Set for Protein-Protein Docking" 
-      <i>Journal of Chemical Information and Modeling</i> 55 (2015) 1495–1507
-      
-      <br>
-      <br>
-      
-      <p id=optOut></p>
-      <script id="optInTemplate" type="text/x-jquery-tmpl">
-      All pages use Google Analytics. Click <a href="javascript:gaOptout()">here</a> if you want to opt-out.
-      </script>
-      <script id="optOutTemplate" type="text/x-jquery-tmpl">
-      Google Analytics is disabled. Click <a href="javascript:gaOptin()">here</a> if you want to opt-in.
-	  </script>
-      
-   </div>      
-   <div class="fclear"></div>
-   </div>
-    
-    
-  <footer>
-     <p>© 2018 by F. Krull, Freie Universität Berlin, Macromolecular Modelling Group, Prof. E. W. Knapp</p>
+  <footer class="text-muted py-3">
+    <div class="container">
+      <p class="mb-1">© 2021 by F. Krull, Universitetet i Oslo</p>
+      <p class="mb-0">
+        Krull, F., Korff, G., Elghobashi-Meinhardt, N., &amp; Knapp, E. W. "ProPairs: A Data Set for Protein-Protein Docking" 
+      <i>Journal of Chemical Information and Modeling</i> <b>2015</b>, 55 (7), 1495–1507.
+      <a href=http://dx.doi.org/10.1021/acs.jcim.5b00082 target="_blank">
+        DOI: 10.1021/acs.jcim.5b00082
+      </a>
+    </div>
   </footer>
 </body>
 </html>
-
-
