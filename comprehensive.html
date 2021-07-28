@@ -45,6 +45,7 @@
           For better performance, please consider <a href="dl_pff.html">downloading the data set</a> or viewing 
           the smaller, <a id="link-nonred" href="./nonredundant.html">non-redundant data set</a>. Both options feature the data in more detail.
         </p>
+        <p id="filter-info" class="text-muted"></p>
       </div>
       <div class="col-md-3 form-group">
         <label for="sel-set-id" class="form-label">Data set version:</label>
@@ -212,6 +213,12 @@
               },
             ],
           });
+          // show any filter info
+          const active_filters = Object.keys(filter);
+          if (active_filters.length > 0) {
+            const filter_str = active_filters.map(e => `${e.toLowerCase()}=${filter[e]}`).join(", ");
+            document.getElementById("filter-info").innerText = `Showing ${msg.data.value.length}/${set_descr.num_alignments} entries (active filters: ${filter_str})`;
+          }
         }
       }
       
