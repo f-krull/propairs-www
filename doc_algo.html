@@ -17,13 +17,9 @@
   <script>pplayout.init();</script>
   <header id="pp-nav" class="mb-auto"></header><script>pplayout.nav();</script>
   <div class="container">
-    <h1>&#x1F6A7; under construction &#x1F6A7; </h1>
     <h1 class="py-lg-3">The ProPairs algorithm</h1>
     <div class="row">
-      <div class="col-xs-12 col-md-4">
-        <img class="img-responsive" src="img/about/seed_1.jpg" width="100%">
-      </div>
-      <div class="col-xs-12 col-md-8">
+      <div class="col-xs-12 col-md-12">
         <h2 class="py-lg-3">Overview</h1>
         <p>The ProPairs algorithm identifies protein docking complexes within the Protein Data Bank (PDB): For every PDB structure
         the algorithm considers it as a <i>potential</i> docking complex and tries to detect all suitable unbound structures. 
@@ -39,10 +35,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-xs-12 col-md-4">
-        <img class="img-responsive" src="img/about/seed_1.jpg" width="100%">
-      </div>
-      <div class="col-xs-12 col-md-8">
+      <div class="col-xs-12 col-md-12">
         <h2>Interface Partitioning with the Unbound Assignment Algorithm</h2>
         <p>The ProPairs algorithm identifies protein docking complexes within the Protein Data Bank (PDB): For every PDB structure
         the algorithm considers it as a <i>potential</i> docking complex and tries to detect all suitable unbound structures. 
@@ -54,65 +47,71 @@
         ProPairs uses parallelization and has efficient pre-filtering to avoid a combinatorial explosion. 
         For a more detailed description of the ProPairs method, please refer to <a href="http://dx.doi.org/10.1021/acs.jcim.5b00082">[Krull et al. 2015]</a> or to the <a href="https://github.com/propairs/propairs">source code</a>.
         </p>
-
       </div>
-      
-      
-    
-    
-    
-    <h2>
-    
-    </h2>
+    </div>
     
     <h3>
     Asking Questions with Seeds
     </h3>
+    <div class="row">
+      <div class="col-xs-12 col-md-8">
+        <p>
+          The core of the ProPairs algorithm is a <a href="https://github.com/f-krull/xtal/tree/master/src/xtalcompunbound">tool</a> that is able to answer simple yes/no questions: 
+          In the first example on the right we ask: 
+          </p>
+        <blockquote class="blockquote text-center"><em>Is the structure 1zvh a protein docking complex with the interface between the chain A and L 
+        and is chain A of 1ghl a suitable unbound structure for chain <b>A</b> of 1zvh?</em></blockquote>
+        <p>The answer is <em>no</em>. But if we ask:</p>
+        <blockquote class="blockquote text-center"><em>Is the structure 1zvh a protein docking complex with the interface between the chain L and A 
+        and is chain A of 1ghl a suitable unbound structure for chain <b>L</b> of 1zvh?</em></blockquote>
+        <p>
+        The answer is <em>yes</em>!
+        </p>
+      </div>
+      <div class="col-xs-12 col-md-4">
+        <figure class="figure">
+          <img src="img/about/seed_1.jpg" class="figure-img img-fluid rounded border border-2 shadow-sm p-2" alt="...">
+        </figure>
+      </div>
+    </div>
     
-    <p>
-    The core of the ProPairs algorithm is a <a href="https://github.com/f-krull/xtal/tree/master/src/xtalcompunbound">tool</a> that is able to answer simple yes/no questions: 
-    In the first example on the right we ask: 
-    </p>
-    <blockquote class="it">"Is the structure 1zvh a protein docking complex with the interface between the chain A and L 
-    and is chain A of 1ghl a suitable unbound structure for chain <b>A</b> of 1zvh?" </blockquote>
-    The answer is "no". But if we ask:
-    <blockquote class="it">"Is the structure 1zvh a protein docking complex with the interface between the chain L and A 
-    and is chain A of 1ghl a suitable unbound structure for chain <b>L</b> of 1zvh?" </blockquote>
-    <p>
-    The answer is "yes"!
-    </p>
-    
-    <img class="fright" style="width: 178px; height: 111px" src="img/about/seed_2.jpg"></img>
-    
-    <p>Such a question can be formulated as a tuple (pdbB, cB1, cB2, pdbU, cU1)  that we call a <b>seed</b>. 
-    The initial requirements for a seed are:
-    </p>
-      <ul>
-      <li>
-      pdbB is a PDB structure with at least two chains (cB1, and cB2)
-      </li>
-      <li>
-      cB1 and cB2 are in contact
-      </li>
-      <li>
-      pdbU is a PDB structure with at least one chain (cU1)
-      </li>
-      <li>
-      cB1 has high sequence identity to cU1
-      </li>
-      <li>
-      pdbU has no chain with sequence identity to cB2
-      </li>        
-      </ul>
-    <p>
-    If any of these requirements are not met, the answer of the algorithm is "no". 
-    The idea is to ask a very specific question that gives a deterministic answer. 
-    Later we show how to use a pre-filter to find promising questions and how to 
-    combine all the answers to generate the ProPairs data set. 
-    </p>
+    <div class="row">
+      <div class="col-xs-12 col-md-4">
+        <figure class="figure border border-2 rounded shadow-sm">
+          <img src="img/about/seed_2.jpg" class="figure-img img-fluid p-2" alt="...">
+          <img src="img/about/seed_3.jpg" class="figure-img img-fluid p-2" alt="...">
+        </figure>
+      </div>
+      <div class="col-xs-12 col-md-8">
+        <p>Such a question can be formulated as a tuple (pdbB, cB1, cB2, pdbU, cU1)  that we call a <b>seed</b>. 
+        The initial requirements for a seed are:
+        </p>
+          <ul>
+          <li>
+          pdbB is a PDB structure with at least two chains (cB1, and cB2)
+          </li>
+          <li>
+          cB1 and cB2 are in contact
+          </li>
+          <li>
+          pdbU is a PDB structure with at least one chain (cU1)
+          </li>
+          <li>
+          cB1 has high sequence identity to cU1
+          </li>
+          <li>
+          pdbU has no chain with sequence identity to cB2
+          </li>        
+          </ul>
+        <p>
+        If any of these requirements are not met, the answer of the algorithm is "no". 
+        The idea is to ask a very specific question that gives a deterministic answer. 
+        Later we show how to use a pre-filter to find promising questions and how to 
+        combine all the answers to generate the ProPairs data set. 
+        </p>
+      </div>
+    </div>
       
-
-    <img class="fleft" style="width: 302px; height: 131px" src="img/about/seed_3.jpg"></img>
     
     <h3>
     Binding Partners with Multiple Chains: Chain-Assignments
