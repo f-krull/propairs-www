@@ -232,6 +232,23 @@
               ? `biol.unit ${n.charAt(4)}`
               : `Model ${"a".charCodeAt(0)-n.charCodeAt(4)+1}`;
         }
+        const _getCofMap = (bcof, ucof) => {
+          bcof = bcof.filter(e => e != '-');
+          ucof = ucof.filter(e => e != '-');
+          const _getCof = (s) => {
+            const split = s.split(/ (.+)?/);
+            return {
+              id: split[0],
+              pos: split[1].replace("(","").replace(")",""),
+            };
+          }
+          return bcof.map( (e,i) => {
+            return {
+              b: _getCof(e),
+              u:  i < ucof.length ?_getCof(ucof[i]) : null,
+            }
+          })
+        }
 
         const urlParams = new URLSearchParams(window.location.search);
         const set_id = urlParams.get("set");
@@ -286,6 +303,8 @@
           aln1: cjsn.aln1,
           aln2: cjsn.aln2,
           cluster: cjsn.cluster,
+          cof1: _getCofMap(cjsn.b1cof, cjsn.u1cof),
+          cof2: _getCofMap(cjsn.b2cof, cjsn.u2cof),
         }
         console.log(cjsn);
         console.log(cplx)
@@ -327,7 +346,7 @@
           <td></td>
           <td></td>
           <td></td>
-          <td><cplx-detail-pdb-url :pdb4="cplx.u1.pdb" :exp="cplx.u1.exp"></cplx-detail-pdb-url></td>
+          <td class="p-2"><cplx-detail-pdb-url :pdb4="cplx.u1.pdb" :exp="cplx.u1.exp"></cplx-detail-pdb-url></td>
           <td></td>
         </tr>
         <tr class="x1 spaceb">
@@ -366,13 +385,30 @@
           <td title="RMSD to the interface of the bound structure"><span class="emph">Int. RMSD:</span><span>{{cplx.u1.irmsd}} Å</span></td>
           <td></td>
         </tr>
-        <tr class="x1 cof">
+        <tr class="x1">
           <td></td>
           <td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span>{{cplx.b1.gaps}}</span></td>
           <td></td>
           <td></td>
           <td></td>
           <td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span>{{cplx.u1.gaps}}</span></td>
+          <td></td>
+        </tr>
+        <tr class="x1" v-for="(cof, cofIdx) in cplx.cof1">
+          <td></td>
+          <td>
+            <span class="emph">{{ cofIdx == 0 ? "Cofactors:" : ""}}</span>
+            <a target="_blank" v-bind:href="'https://www.rcsb.org/ligand/'+cof.b.id">{{cof.b.id}}</a>
+            {{cof.b.loc}}
+          </td>
+          <td></td>
+          <td><span v-if="cofIdx == 0">&rarr;</span></td>
+          <td></td>
+          <td>
+            <span class="emph">{{ cofIdx == 0 ? "Cofactors:" : ""}}</span>
+            <a target="_blank" v-bind:href="'https://www.rcsb.org/ligand/'+cof.u.id">{{cof.u.id}}</a>
+            {{cof.u.loc}}
+          </td>
           <td></td>
         </tr>
         <tr class="x1 last spaceb">
@@ -418,7 +454,7 @@
           <td></td>
           <td></td>
           <td></td>
-          <td>
+          <td class="p-2">
             <cplx-detail-pdb-url v-if="cplx.u2" :pdb4="cplx.u2.pdb" :exp="cplx.u2.exp"></cplx-detail-pdb-url>
             <span v-else>not available</span>
           </td>
@@ -459,13 +495,30 @@
           <td title="RMSD to the interface of the bound structure"><span class="emph">Int. RMSD:</span><span id="val-u2irmsd">{{cplx.u2 ? cplx.u2.irmsd + " Å" : ""}}</span></td>
           <td></td>
         </tr>
-        <tr class="x2 cof">
+        <tr class="x2">
           <td></td>
           <td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span id="val-b2gaps">{{cplx.b2.gaps}}</span></td>
           <td></td>
           <td></td>
           <td></td>
           <td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span id="val-u2gaps">{{cplx.u2 ? cplx.u2.gaps : ""}}</span></td>
+          <td></td>
+        </tr>
+        <tr class="x2" v-for="(cof, cofIdx) in cplx.cof2">
+          <td></td>
+          <td>
+            <span class="emph">{{ cofIdx == 0 ? "Cofactors:" : ""}}</span>
+            <a target="_blank" v-bind:href="'https://www.rcsb.org/ligand/'+cof.b.id">{{cof.b.id}}</a>
+            {{cof.b.loc}}
+          </td>
+          <td></td>
+          <td><span v-if="cof.u && cofIdx == 0">&rarr;</span></td>
+          <td></td>
+          <td>
+            <span class="emph">{{ cofIdx == 0 ? "Cofactors:" : ""}}</span>
+            <a v-if="cof.u" target="_blank" v-bind:href="'https://www.rcsb.org/ligand/'+cof.u.id">{{cof.u.id}}</a>
+            {{cof.u ? cof.u.loc : ""}}
+          </td>
           <td></td>
         </tr>
         <tr class="x2 last spaceb">
