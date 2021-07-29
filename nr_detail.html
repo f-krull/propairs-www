@@ -194,6 +194,26 @@
 }
 
 
+label.ppb1 {
+  background-color: #DCC7FC;
+  min-width: 100px;
+  border-radius: 4px;
+}
+label.ppb2 {
+  background-color: #D3FFBB;
+  min-width: 100px;
+  border-radius: 4px;
+}
+label.ppu1 {
+  background-color: #C7D2FF;
+  min-width: 100px;
+  border-radius: 4px;
+}
+label.ppu2 {
+  background-color: #BBFFBB;
+  min-width: 100px;
+  border-radius: 4px;
+}
 
 
 </style>
@@ -203,12 +223,18 @@
   <header id="pp-nav" class="mb-auto"></header><script>pplayout.nav();</script>
   <div class="container">
     <div id="app" class="my-4">
-      <h1>&#x1F6A7; under construction &#x1F6A7; </h1>
       <p v-if="loading">loading...</p>
       <div v-else>
         <span id="headline" class="h2 py-lg-3">Detail view for <em>{{cplx.b.pdb}} {{cplx.b1.ci}}:{{cplx.b2.ci}}</em></span><br>
         <span id="subheadline" class="py-lg-3">({{seedIdx}}/{{datasetId}})</span>
-        <cplx-detail-data v-bind:cplx="cplx">
+        <div class="row">
+          <div class="col-lg-6">
+            <cplx-detail-data v-bind:cplx="cplx">
+          </div>
+          <div class="col-lg-6">
+            <cplx-img v-bind:cplx-id="seedIdx" v-bind:dataset-id="datasetId"></cplx-img>
+          </div>
+        </div>
       </div>
       </cplx-detail-data>
       <cplx-cluster v-if="!loading" v-bind:cplx="cplx" v-bind:dataset-id="datasetId"></cplx-cluster>
@@ -563,10 +589,6 @@
         </div>
       `,
     });
-    // Show interface alignment (similarity={{sim*100}}%)
-    // <div v-for="value in object">Chain {{aln.chainb}} &rarr; {{aln.chainu}} </div>
-    // <span title="indicates residue belongs to interface region of bound structure">Interf.: {{aln.int}}</span>
-
     app.component('cplx-cluster', {
       props: ['datasetId', 'cplx',],
       template: /*html*/`
@@ -594,6 +616,62 @@
       <a :href="'https://www.rcsb.org/structure/'+pdb4">{{pdb4}}</a> <span v-if="exp"> ({{ exp }})</span>
       `
     });
+    app.component('cplx-img', {
+      props: ["datasetId", "cplxId"],
+      data() {
+        return {
+          sel: {
+            b1: true,
+            b2: true,
+            u1: true,
+            u2: true,
+          }
+        }
+      },
+      template: /*html*/`
+        <figure class="figure mt-5 rounded border border-2 shadow-sm ">
+          <img v-bind:src="getImgUrl()" class="figure-img img-fluid p-2" alt="...">
+          <div class="row mx-2">
+            <div class="col-md-6 mb-1">
+              <div class="form-check form-switch">
+                <input class="form-check-input my-1" type="checkbox" id="inpImgB1" v-model="sel.b1">
+                <label class="form-check-label p-1 ppb1" for="inpImgB1">Bound 1</label>
+              </div>
+            </div>
+            <div class="col-md-6 mb-1">
+              <div class="form-check form-switch">
+                <input class="form-check-input my-1" type="checkbox" id="inpImgU1" v-model="sel.u1">
+                <label class="form-check-label p-1 ppu1" for="inpImgU1">Unbound 1</label>
+              </div>
+            </div>
+          </div>
+          <div class="row mx-2">
+            <div class="col-md-6 mb-1">
+              <div class="form-check form-switch">
+                <input class="form-check-input my-1" type="checkbox" id="inpImgB2" v-model="sel.b2">
+                <label class="form-check-label p-1 ppb2" for="inpImgB2">Bound 2</label>
+              </div>
+            </div>
+            <div class="col-md-6 mb-1">
+              <div class="form-check form-switch">
+                <input class="form-check-input my-1" type="checkbox" id="inpImgU2" v-model="sel.u2">
+                <label class="form-check-label p-1 ppu2" for="inpImgU2">Unbound 2</label>
+              </div>
+            </div>
+          </div>
+        </figure>
+        `,
+      methods: {
+        getImgUrl() {
+          const sel = 
+            (this.sel.b1 ? "1" : "0") +
+            (this.sel.u1 ? "1" : "0") +
+            (this.sel.b2 ? "1" : "0") +
+            (this.sel.u2 ? "1" : "0");
+          return `data/2020-12-30test/info/${this.cplxId}/img/img_p${sel}_01.webp`
+        },
+      }
+    })
     app.mount('#app');
   </script>
   <footer id="pp-footer"></footer><script>pplayout.footer();</script>
