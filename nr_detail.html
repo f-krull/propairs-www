@@ -53,7 +53,7 @@
    overflow: auto;
    padding: 5px;
 }
-#dbDetailData .alnData > span {
+#dbDetailData .alnData > div > span {
    font-family: "Courier",monospace;
    white-space: pre;
    font-size: 14px;
@@ -269,9 +269,9 @@
             type: cjsn.u1type.toLowerCase(),
             ci: cjsn.u1ci,
             c: cjsn.u1c,
-            ca: parseInt(cjsn.u1ca),
             gaps: parseInt(cjsn.u1gaps),
             irmsd: parseFloat(cjsn.u1irmsd),
+            sim: parseFloat(cjsn.u1sim),
           },
           u2: !parseInt(cjsn.hasu2) ? null : {
             pdb: _getPdb4(cjsn.u2p),
@@ -279,9 +279,9 @@
             type: cjsn.u2type.toLowerCase(),
             ci: cjsn.u2ci,
             c: cjsn.u2c,
-            ca: parseInt(cjsn.u2ca),
             gaps: parseInt(cjsn.u2gaps),
             irmsd: parseFloat(cjsn.u2irmsd),
+            sim: parseFloat(cjsn.u2sim),
           },
           aln1: cjsn.aln1,
           aln2: cjsn.aln2,
@@ -299,7 +299,7 @@
       props: ['cplx'],
       template: /*html*/`
       <div id="dbDetailData"> 
-        <cplx-detail-align v-bind:cplx="cplx"></cplx-detail-align>
+        <cplx-detail-align :name="1" :sim="cplx.u1.sim" :aln="cplx.aln1"></cplx-detail-align>
         <table>
         <colgroup>
           <col span="1" class="border">
@@ -488,21 +488,32 @@
         </tr>
         </tbody>
         </table>
-        <cplx-detail-align v-bind:cplx="cplx"></cplx-detail-align>
+        <cplx-detail-align v-if="cplx.u2" :name="2" :sim="cplx.u2.sim" :aln="cplx.aln2"></cplx-detail-align>
       </div>
         `,
      });
     app.component('cplx-detail-align', {
-      props: ['cplx'],
+      props: ['aln', 'sim', 'name'],
       template: /*html*/`
-        <div class="aln" data-id="aln1">
-          <button title="show interface alignments">
-            Show interface alignment (similarity={{cplx.u1sim*100}}%)
+        <div class="aln">
+          <button class="btn btn-outline-secondary" title="show interface alignments" data-bs-toggle="collapse" aria-controls="aln-collapse" aria-expanded="false" v-bind:data-bs-target="'#aln-collapse'+name">
+            Show interface alignment (similarity={{sim*100}}%)
           </button>
-          <div class="alnData"></div>
+          <div v-bind:id="'aln-collapse'+name" class="collapse hide alnData">
+            <div v-for="a in aln" >Chain {{a.pdbb}}:{{a.chainb}}&rarr;{{a.pdbu}}:{{a.chainu}}, {{a.nalint}}/{{a.nint}} interface residues aligned<br>
+              <span title="indicates residue belongs to interface region of bound structure">Interf.: {{a.int}}</span><br>
+              <span title="amino acid sequence of the bound structures' chain">{{a.pdbb}}_{{a.chainb}}: {{a.alb}}</span><br>
+              <span title="amino acid sequence of unbound structures' chain">{{a.pdbu}}_{{a.chainu}}: {{a.alu}}</span><br>
+              <span title="alignend residues between the two chains">Match: {{a.aln}}</span><br><br>
+            </div>
+          </div>
         </div>
-      `
+      `,
     });
+    // Show interface alignment (similarity={{sim*100}}%)
+    // <div v-for="value in object">Chain {{aln.chainb}} &rarr; {{aln.chainu}} </div>
+    // <span title="indicates residue belongs to interface region of bound structure">Interf.: {{aln.int}}</span>
+
     app.component('cplx-cluster', {
       props: ['datasetId', 'cplx',],
       template: /*html*/`
