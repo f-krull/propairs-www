@@ -110,21 +110,21 @@
 }
 /*-- b1 --*/
 #dbDetailData tr.x1 th:nth-child(2) {
-   background-color: #A183CE;
-   border: solid 2px #A183CE;
+  background-color: #A183CE;
+  border: solid 2px #A183CE;
 }
 #dbDetailData tr.x1 td:nth-child(2) {
-   background-color: #DCC7FC;
-   border-color: #A183CE;
+  background-color: #DCC7FC;
+  border-color: #A183CE;
 }
 /*-- u1 --*/
 #dbDetailData tr.x1 th:nth-child(6) {
-   background-color: #2A41A0;
-   border: solid 2px #2A41A0;
+  background-color: #2A41A0;
+  border: solid 2px #2A41A0;
 }
 #dbDetailData tr.x1 td:nth-child(6) {
-   background-color: #C7D2FF;
-   border-color: #2A41A0;
+  background-color: #C7D2FF;
+  border-color: #2A41A0;
 }
 /*-- b2 --*/
 #dbDetailData tr.x2 th:nth-child(2) {
@@ -206,7 +206,7 @@
       <h1>&#x1F6A7; under construction &#x1F6A7; </h1>
       <p v-if="loading">loading...</p>
       <div v-else>
-        <span id="headline" class="h2 py-lg-3">Detail view {{cplx.bp}} {{cplx.b1ci}} {{cplx.b2ci}}</span><br>
+        <span id="headline" class="h2 py-lg-3">Detail view for <em>{{cplx.b.pdb}} {{cplx.b1.ci}}:{{cplx.b2.ci}}</em></span><br>
         <span id="subheadline" class="py-lg-3">({{seedIdx}}/{{datasetId}})</span>
         <cplx-detail-data v-bind:cplx="cplx">
       </div>
@@ -226,24 +226,13 @@
         }
       },
       async created() {
-        const _getPdbInfo = (n) => {
-          const inf = {
-            pdb4: "-",
-            exp: null,
-          }
-          if (n.length > 2) {
-            inf.exp = n.charAt(4).match(/[0-9]/)
+        const _getPdb4 = (n) => n.substr(0,4);
+        const _getExp = (n) => {
+          return n.charAt(4).match(/[0-9]/)
               ? `biol.unit ${n.charAt(4)}`
               : `Model ${"a".charCodeAt(0)-n.charCodeAt(4)+1}`;
-            inf.pdb4 = n.substr(0,4)
-          };
-          return inf
-          //return `<b><a href="https://www.rcsb.org/structure/${n.substr(0,4)}">${n.substr(0,4)}</a></b> ${t}`;
         }
-    
-        const _getRmsd = (r) => {
-          return `${r} Å`;
-        }
+
         const urlParams = new URLSearchParams(window.location.search);
         const set_id = urlParams.get("set");
         const seed_idx = urlParams.get("id");
@@ -255,28 +244,52 @@
           });
           return await r.json();
         })();
-        {
-          const { pdb4, exp } = _getPdbInfo(cjsn.bp)
-          cjsn.bname = pdb4
-          cjsn.bexp = exp
+        // rebuild cplx json
+        const cplx = {
+          b: {
+            pdb: _getPdb4(cjsn.bp),
+            exp: _getExp(cjsn.bp),
+            type: cjsn.btype.toLowerCase(),
+          },
+          b1: {
+            ci: cjsn.b1ci,
+            c: cjsn.b1c,
+            ca: parseInt(cjsn.b1ca),
+            gaps: parseInt(cjsn.b1gaps),
+          },
+          b2: {
+            ci: cjsn.b2ci,
+            c: cjsn.b2c,
+            ca: parseInt(cjsn.b2ca),
+            gaps: parseInt(cjsn.b2gaps),
+          },
+          u1: {
+            pdb: _getPdb4(cjsn.u1p),
+            exp: _getExp(cjsn.u1p),
+            type: cjsn.u1type.toLowerCase(),
+            ci: cjsn.u1ci,
+            c: cjsn.u1c,
+            ca: parseInt(cjsn.u1ca),
+            gaps: parseInt(cjsn.u1gaps),
+            irmsd: parseFloat(cjsn.u1irmsd),
+          },
+          u2: !parseInt(cjsn.hasu2) ? null : {
+            pdb: _getPdb4(cjsn.u2p),
+            exp: _getExp(cjsn.u2p),
+            type: cjsn.u2type.toLowerCase(),
+            ci: cjsn.u2ci,
+            c: cjsn.u2c,
+            ca: parseInt(cjsn.u2ca),
+            gaps: parseInt(cjsn.u2gaps),
+            irmsd: parseFloat(cjsn.u2irmsd),
+          },
+          aln1: cjsn.aln1,
+          aln2: cjsn.aln2,
+          cluster: cjsn.cluster,
         }
-        {
-          const { pdb4, exp } = _getPdbInfo(cjsn.u1p)
-          cjsn.u1name = pdb4
-          cjsn.u1exp = exp
-        }
-        {
-          const { pdb4, exp } = _getPdbInfo(cjsn.u2p)
-          cjsn.u2name = pdb4
-          cjsn.u2exp = exp
-        }
-        cjsn.u1irmsd = _getRmsd(cjsn.u1irmsd);
-        cjsn.u2irmsd = _getRmsd(cjsn.u2irmsd);
-        cjsn.u1sim =  parseFloat(cjsn.u1sim);
-        cjsn.u2sim =  parseFloat(cjsn.u2sim);
-        cjsn.hasu2 = !!parseInt(cjsn.hasu2);
         console.log(cjsn);
-        this.cplx = cjsn;
+        console.log(cplx)
+        this.cplx = cplx;
         this.datasetId = set_id;
         this.seedIdx = seed_idx;
         this.loading = false;
@@ -284,9 +297,6 @@
     })
     app.component('cplx-detail-data', {
       props: ['cplx'],
-      created() {
-        console.log(this.cplx);
-      },
       template: /*html*/`
       <div id="dbDetailData"> 
         <cplx-detail-align v-bind:cplx="cplx"></cplx-detail-align>
@@ -302,27 +312,180 @@
         </colgroup>
         <tbody>
         <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-        <tr class="x1"><td></td><th>Bound 1</th><td></td><td></td><td></td><th>Unbound 1</th><td></td></tr>
-        <tr class="x1"><td></td><td></td><td></td><td></td><td></td><td><cplx-detail-pdb-url :pdb4="cplx.u1name" :exp="cplx.u1exp"></cplx-detail-pdb-url></td><td></td></tr>
-        <tr class="x1 spaceb"><td></td><td></td><td></td><td></td><td></td><td>{{cplx.u1type}}</td><td></td></tr>
-        <tr class="x1 spaceb"><td></td><td><span class="emph">Chains:</span><span>{{cplx.b1c}}</span></td><td></td><td></td><td></td><td><span class="emph">Chains:</span><span>{{cplx.u1c}}</span></td><td></td></tr>
-        <tr  class="x1"><td></td>     <td  title="chains participating in the interface"><span class="emph">Int. Chains:</span><span>{{cplx.b1ci}}</span></td><td></td><td>&rarr;</td><td></td><td title="chains participating in the interface"><span class="emph">Int. Chains:</span><span>{{cplx.u1ci}}</span></td><td></td></tr>
-        <tr class="x1"><td></td>      <td title="number of C&alpha; atoms in the interface"><span class="emph">Int. C&alpha;:</span><span>{{cplx.b1ca}}</span></td><td></td><td></td><td></td><td title="RMSD to the interface of the bound structure"><span class="emph">Int. RMSD:</span><span>{{cplx.u1irmsd}}</span></td><td></td></tr>
-        <tr class="x1 cof"><td></td>  <td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span>{{cplx.b1gaps}}</span></td><td></td><td></td><td></td><td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span>{{cplx.u1gaps}}</span></td><td></td></tr>
-        <tr class="x1 last spaceb"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
-        <tr class="bc spaceh"><td></td><td><cplx-detail-pdb-url :pdb4="cplx.bname" :exp="cplx.bexp"></cplx-detail-pdb-url></td><td></td><td></td><td></td><td></td><td></td></tr>
-        <tr class="bc spaceb"       ><td></td><td id="val-btype">{{cplx.btype}}</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr class="x1">
+          <td></td>
+          <th>Bound 1</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <th>Unbound 1</th>
+          <td></td>
+        </tr>
+        <tr class="x1">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><cplx-detail-pdb-url :pdb4="cplx.u1.pdb" :exp="cplx.u1.exp"></cplx-detail-pdb-url></td>
+          <td></td>
+        </tr>
+        <tr class="x1 spaceb">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>{{cplx.u1.type}}</td>
+          <td></td>
+        </tr>
+        <tr class="x1 spaceb">
+          <td></td>
+          <td><span class="emph">Chains:</span><span>{{cplx.b1.c}}</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><span class="emph">Chains:</span><span>{{cplx.u1.c}}</span></td>
+          <td></td>
+        </tr>
+        <tr class="x1">
+          <td></td>
+          <td title="chains participating in the interface"><span class="emph">Int. Chains:</span><span>{{cplx.b1.ci}}</span></td>
+          <td></td>
+          <td>&rarr;</td>
+          <td></td>
+          <td title="chains participating in the interface"><span class="emph">Int. Chains:</span><span>{{cplx.u1.ci}}</span></td>
+          <td></td>
+        </tr>
+        <tr class="x1">
+          <td></td>
+          <td title="number of C&alpha; atoms in the interface"><span class="emph">Int. C&alpha;:</span><span>{{cplx.b1.ca}}</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td title="RMSD to the interface of the bound structure"><span class="emph">Int. RMSD:</span><span>{{cplx.u1.irmsd}} Å</span></td>
+          <td></td>
+        </tr>
+        <tr class="x1 cof">
+          <td></td>
+          <td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span>{{cplx.b1.gaps}}</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span>{{cplx.u1.gaps}}</span></td>
+          <td></td>
+        </tr>
+        <tr class="x1 last spaceb">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr class="bc spaceh">
+          <td></td>
+          <td><cplx-detail-pdb-url :pdb4="cplx.b.pdb" :exp="cplx.b.exp"></cplx-detail-pdb-url></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr class="bc spaceb">
+          <td></td>
+          <td id="val-btype">{{cplx.b.type}}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
         <!-- <tr class="bc spaceb"><td></td><td title="show interface cluster"><button id="clus" value="{{cluster}}"">Show sim. interfaces</button></td><td></td><td></td><td></td><td></td><td></td></tr> -->
-        <tr class="x2"><td></td><th>Bound 2</th><td></td><td></td><td></td><th>Unbound 2</th><td></td></tr>
-        <tr class="x2"><td></td><td></td><td></td><td></td><td></td><td><cplx-detail-pdb-url :pdb4="cplx.u2name" :exp="cplx.u2exp"></cplx-detail-pdb-url></td><td></td></tr>
-        <tr class="x2 spaceb"><td></td><td></td><td></td><td></td><td></td><td id="val-u2type">{{cplx.u2type}}</td><td></td></tr>
-        <tr class="x2 spaceb"><td></td><td><span class="emph">Chains:</span><span id="val-b2c">{{cplx.b2c}}</span></td><td></td><td></td><td></td><td ><span class="emph">Chains:</span><span id="val-u2c">{{cplx.u2c}}</span></td><td></td></tr>
-        <tr class="x2"><td></td><td  title="chains participating in the interface"><span class="emph">Int. Chains:</span><span id="val-b2ci">{{cplx.b2ci}}</span></td><td></td><td>&rarr;</td><td></td><td title="chains participating in the interface"><span class="emph">Int. Chains:</span><span id="val-u2ci">{{cplx.u2ci}}</span></td><td></td></tr>
-        <tr class="x2"><td></td><td  title="number of C&alpha; atoms in the interface"><span class="emph">Int. C&alpha;:</span><span id="val-b2ca">{{cplx.b2ca}}</span></td><td></td><td></td><td></td><td title="RMSD to the interface of the bound structure"><span class="emph">Int. RMSD:</span><span id="val-u2irmsd">{{cplx.u2irmsd}}</span></td><td></td></tr>
-        <tr class="x2 cof"><td></td><td  title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span id="val-b2gaps">{{cplx.b2gaps}}</span></td><td></td><td></td><td></td><td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span id="val-u2gaps">{{cplx.u2gaps}}</span></td><td></td></tr>
-        <tr class="x2 last spaceb"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr class="x2">
+          <td></td>
+          <th>Bound 2</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <th>Unbound 2</th>
+          <td></td>
+        </tr>
+        <tr class="x2">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>
+            <cplx-detail-pdb-url v-if="cplx.u2" :pdb4="cplx.u2.pdb" :exp="cplx.u2.exp"></cplx-detail-pdb-url>
+            <span v-else>not available</span>
+          </td>
+          <td></td>
+        </tr>
+        <tr class="x2 spaceb">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td id="val-u2type">{{cplx.u2 ? cplx.u2.type : ""}}</td>
+          <td></td>
+        </tr>
+        <tr class="x2 spaceb">
+          <td></td>
+          <td><span class="emph">Chains:</span><span id="val-b2c">{{cplx.b2.c}}</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td ><span class="emph">Chains:</span><span id="val-u2c">{{cplx.u2 ? cplx.u2.c : ""}}</span></td>
+          <td></td>
+        </tr>
+        <tr class="x2">
+          <td></td><td title="chains participating in the interface"><span class="emph">Int. Chains:</span><span id="val-b2ci">{{cplx.b2.ci}}</span></td>
+          <td></td>
+          <td><span v-if="cplx.u2">&rarr;</span></td>
+          <td></td>
+          <td title="chains participating in the interface"><span class="emph">Int. Chains:</span><span id="val-u2ci">{{cplx.u2 ? cplx.u2.ci : ""}}</span></td>
+          <td></td>
+        </tr>
+        <tr class="x2">
+          <td></td>
+          <td title="number of C&alpha; atoms in the interface"><span class="emph">Int. C&alpha;:</span><span id="val-b2ca">{{cplx.b2.ca}}</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td title="RMSD to the interface of the bound structure"><span class="emph">Int. RMSD:</span><span id="val-u2irmsd">{{cplx.u2 ? cplx.u2.irmsd + " Å" : ""}}</span></td>
+          <td></td>
+        </tr>
+        <tr class="x2 cof">
+          <td></td>
+          <td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span id="val-b2gaps">{{cplx.b2.gaps}}</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td title="number of gaps in the interface"><span class="emph">Int. Gaps:</span><span id="val-u2gaps">{{cplx.u2 ? cplx.u2.gaps : ""}}</span></td>
+          <td></td>
+        </tr>
+        <tr class="x2 last spaceb">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
         </tbody>
         </table>
         <cplx-detail-align v-bind:cplx="cplx"></cplx-detail-align>
@@ -342,22 +505,19 @@
     });
     app.component('cplx-cluster', {
       props: ['datasetId', 'cplx',],
-      created() {
-        console.log(this.datasetId)
-      },
       template: /*html*/`
       <div>
-        <a v-bind:href='getUrlSimU1()'                  >Show all similar unbound structures for {{ cplx.u1name }} {{ cplx.u1ci }} (binding partner 1)</a><br>
-        <a v-bind:href='getUrlSimU2()' v-if='cplx.hasu2'>Show all similar unbound structures for {{ cplx.u2name }} {{ cplx.u2ci }} (binding partner 2)</a><br>
-        <a v-bind:href='getUrlCluster()'>Show all similar interfaces for {{ cplx.bname }} {{cplx.b1ci}}:{{cplx.b2ci}}</a><br>
+        <a v-bind:href='getUrlSimU1()'               >Show all similar unbound structures for {{ cplx.u1.pdb }} {{ cplx.u1.ci }} (binding partner 1)</a><br>
+        <a v-bind:href='getUrlSimU2()' v-if='cplx.u2'>Show all similar unbound structures for {{ cplx.u2.pdb }} {{ cplx.u2.ci }} (binding partner 2)</a><br v-if='cplx.u2'>
+        <a v-bind:href='getUrlCluster()'>Show all similar interfaces for {{ cplx.b.pdb }} {{cplx.b1.ci}}:{{cplx.b2.ci}}</a><br>
         </div>
         `,
         methods: {
           getUrlSimU1() {
-            return `comprehensive.html?set=${this.datasetId}&filterSEEDPB=${this.cplx.bname}&filterCBI1=${this.cplx.b1ci}&filterCBI2=${this.cplx.b2ci}`
+            return `comprehensive.html?set=${this.datasetId}&filterSEEDPB=${this.cplx.b.pdb}&filterCBI1=${this.cplx.b1.ci}&filterCBI2=${this.cplx.b2.ci}`
           },
           getUrlSimU2() {
-            return `comprehensive.html?set=${this.datasetId}&filterSEEDPB=${this.cplx.bname}&filterCBI1=${this.cplx.b2ci}&filterCBI2=${this.cplx.b1ci}`
+            return `comprehensive.html?set=${this.datasetId}&filterSEEDPB=${this.cplx.b.pdb}&filterCBI1=${this.cplx.b2.ci}&filterCBI2=${this.cplx.b1.ci}`
           },
           getUrlCluster() {
             return `comprehensive.html?set=${this.datasetId}&filterCLUSID=${this.cplx.cluster}`
