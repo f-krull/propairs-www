@@ -229,7 +229,7 @@ label.ppu2 {
       <div v-else>
         <span id="headline" class="h2 py-lg-3">Detail view for <em>{{cplx.b.pdb}} {{cplx.b1.ci}}:{{cplx.b2.ci}}</em></span><br>
         <span id="subheadline" class="py-lg-3">({{seedIdx}}/{{datasetId}})</span>
-        <div class="row">
+        <div class="row mb-4">
           <div class="col-lg-6">
             <cplx-detail-data v-bind:cplx="cplx">
           </div>
@@ -237,9 +237,12 @@ label.ppu2 {
             <cplx-img v-bind:cplx-id="seedIdx" v-bind:dataset-id="datasetId"></cplx-img>
           </div>
         </div>
+        </cplx-detail-data>
+        <h3>Download coordinate files (*.pdb)</h3>
+        <cplx-download v-bind:cplx="cplx" v-bind:dataset-id="datasetId" v-bind:seed-idx="seedIdx" ></cplx-download>
+        <h3>Related structures</h3>
+        <cplx-cluster v-bind:cplx="cplx" v-bind:dataset-id="datasetId"></cplx-cluster>
       </div>
-      </cplx-detail-data>
-      <cplx-cluster v-if="!loading" v-bind:cplx="cplx" v-bind:dataset-id="datasetId"></cplx-cluster>
     </div>
   </div>
   <script>
@@ -290,11 +293,13 @@ label.ppu2 {
           return await r.json();
         })();
         // rebuild cplx json
+        console.log(cjsn)
         const cplx = {
           b: {
             pdb: _getPdb4(cjsn.bp),
             exp: _getExp(cjsn.bp),
             type: cjsn.btype.toLowerCase(),
+            pdb5: cjsn.bp,
           },
           b1: {
             ci: cjsn.b1ci,
@@ -334,8 +339,6 @@ label.ppu2 {
           cof1: _getCofMap(cjsn.b1cof, cjsn.u1cof),
           cof2: _getCofMap(cjsn.b2cof, cjsn.u2cof),
         }
-        console.log(cjsn);
-        console.log(cplx)
         this.cplx = cplx;
         this.datasetId = set_id;
         this.seedIdx = seed_idx;
@@ -577,11 +580,11 @@ label.ppu2 {
       props: ['aln', 'sim', 'name'],
       template: /*html*/`
         <div class="aln">
-          <center>
+          <div>
             <button class="btn btn-outline-secondary" title="show interface alignments" data-bs-toggle="collapse" aria-controls="aln-collapse" aria-expanded="false" v-bind:data-bs-target="'#aln-collapse'+name">
               Show interface alignment<br>(similarity={{sim*100}}%)
             </button>
-          </center>
+          </div>
           <div v-bind:id="'aln-collapse'+name" class="collapse hide alnData">
             <div v-for="a in aln" >Chain {{a.pdbb}}:{{a.chainb}}&rarr;{{a.pdbu}}:{{a.chainu}}, {{a.nalint}}/{{a.nint}} interface residues aligned<br>
               <span title="indicates residue belongs to interface region of bound structure">Interf.: {{a.int}}</span><br>
@@ -593,13 +596,65 @@ label.ppu2 {
         </div>
       `,
     });
+    app.component('cplx-download', {
+      props: ['datasetId', 'cplx', 'seedIdx'],
+      template: /*html*/`
+      <div>
+        <p>Superposed structures for both binding partners (<code>1</code> and <code>2</code>) in bound and unbound state (<code>b</code> and <code>u</code>)</p>
+        <ul>
+          <li>
+            <code>{{ getFileameB1() }}</code> <a v-bind:href='getUrl(getFileameB1())'>download</a>
+          </li>
+          <li>
+            <code>{{ getFileameB2() }}</code> <a v-bind:href='getUrl(getFileameB2())'>download</a>
+          </li>
+          <li>
+            <code>{{ getFileameU1() }}</code> <a v-bind:href='getUrl(getFileameU1())'>download</a>
+          </li>
+          <li>
+            <em v-if="!cplx.u2" class="text-muted small"> Note: no second unbound binding partner was found for this complex. This file contains an empty structure:<br></em>
+            <code>{{ getFileameU2() }}</code> <a v-bind:href='getUrl(getFileameU2())'>download</a>
+          </li>
+        </ul>
+        </div>
+        `,
+        methods: {
+          getUrl(a) {
+            return `data/${this.datasetId}/info/${this.seedIdx}/pdb/${a}`
+          },
+          getFnBase() {
+            return `${this.cplx.b.pdb5}_${this.cplx.b1.ci}-${this.cplx.b2.ci}_${this.seedIdx}`
+          },
+          getFileameB1() {
+            return `${this.getFnBase()}_b1.pdb.gz`
+          },
+          getFileameB2() {
+            return `${this.getFnBase()}_b2.pdb.gz`
+          },
+          getFileameU1() {
+            return `${this.getFnBase()}_u1.pdb.gz`
+          },
+          getFileameU2() {
+            return `${this.getFnBase()}_u2.pdb.gz`
+          },
+        }
+    });
     app.component('cplx-cluster', {
       props: ['datasetId', 'cplx',],
       template: /*html*/`
       <div>
-        <a v-bind:href='getUrlSimU1()'               >Show all similar unbound structures for {{ cplx.u1.pdb }} {{ cplx.u1.ci }} (binding partner 1)</a><br>
-        <a v-bind:href='getUrlSimU2()' v-if='cplx.u2'>Show all similar unbound structures for {{ cplx.u2.pdb }} {{ cplx.u2.ci }} (binding partner 2)</a><br v-if='cplx.u2'>
-        <a v-bind:href='getUrlCluster()'>Show all similar interfaces for {{ cplx.b.pdb }} {{cplx.b1.ci}}:{{cplx.b2.ci}}</a><br>
+        <p>Similar structures within the comprehensive data set of {{ datasetId }}</p>
+        <ul>
+          <li>
+            <a v-bind:href='getUrlCluster()'>All similar interfaces for {{ cplx.b.pdb }} {{cplx.b1.ci}}:{{cplx.b2.ci}}</a>
+          </li>
+          <li>
+            <a v-bind:href='getUrlSimU1()'>All similar unbound structures for {{ cplx.u1.pdb }} {{ cplx.u1.ci }} (binding partner 1)</a>
+          </li>
+          <li v-if='cplx.u2'>
+            <a v-bind:href='getUrlSimU2()'>All similar unbound structures for {{ cplx.u2.pdb }} {{ cplx.u2.ci }} (binding partner 2)</a>
+          </li>
+        </ul>
         </div>
         `,
         methods: {
