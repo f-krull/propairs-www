@@ -44,14 +44,16 @@
    text-align: center;
    width: 540px;
    margin: 10px;
+   display: inline;
 }
 #dbDetailData .aln > button {
    width: 200px;
 }
 #dbDetailData .alnData {
    text-align: left;
-   overflow: auto;
+   overflow: scroll;
    padding: 5px;
+   z-index: -1;
 }
 #dbDetailData .alnData > div > span {
    font-family: "Courier",monospace;
@@ -575,9 +577,11 @@ label.ppu2 {
       props: ['aln', 'sim', 'name'],
       template: /*html*/`
         <div class="aln">
-          <button class="btn btn-outline-secondary" title="show interface alignments" data-bs-toggle="collapse" aria-controls="aln-collapse" aria-expanded="false" v-bind:data-bs-target="'#aln-collapse'+name">
-            Show interface alignment (similarity={{sim*100}}%)
-          </button>
+          <center>
+            <button class="btn btn-outline-secondary" title="show interface alignments" data-bs-toggle="collapse" aria-controls="aln-collapse" aria-expanded="false" v-bind:data-bs-target="'#aln-collapse'+name">
+              Show interface alignment<br>(similarity={{sim*100}}%)
+            </button>
+          </center>
           <div v-bind:id="'aln-collapse'+name" class="collapse hide alnData">
             <div v-for="a in aln" >Chain {{a.pdbb}}:{{a.chainb}}&rarr;{{a.pdbu}}:{{a.chainu}}, {{a.nalint}}/{{a.nint}} interface residues aligned<br>
               <span title="indicates residue belongs to interface region of bound structure">Interf.: {{a.int}}</span><br>
@@ -629,7 +633,7 @@ label.ppu2 {
         }
       },
       template: /*html*/`
-        <figure class="figure mt-5 rounded border border-2 shadow-sm ">
+        <figure class="figure mt-5 rounded border border-2 shadow-sm">
           <img v-bind:src="getImgUrl()" class="figure-img img-fluid p-2" alt="...">
           <hr>
           <div class="row mx-2">
