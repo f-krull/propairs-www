@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://propairs.lcbc.uiocloud.no/sitemap.xml
